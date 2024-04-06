@@ -28,11 +28,11 @@ locals {
   remote_state = {
     backend = !local.is_local_env ? "s3" : "local"
     config = [{
-      bucket = "tofu-state-${local.merged_inputs.project_name}-environments-${local.merged_inputs.environment}"
+      bucket = "tofu-state-${local.merged_inputs.project_name}-${local.merged_inputs.environment}"
       key = "${local.stack_name}/terraform.tfstate"
       region = local.merged_inputs.aws_region
       encrypt = true
-      dynamodb_table = "tofu-lock-${local.merged_inputs.project_name}-environments-${local.merged_inputs.environment}"
+      dynamodb_table = "tofu-lock-${local.merged_inputs.project_name}-${local.merged_inputs.environment}"
       s3_bucket_tags = local.environment_tags
       dynamodb_table_tags = local.environment_tags
     }, {}][!local.is_local_env ? 0 : 1 ]
