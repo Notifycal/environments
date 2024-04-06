@@ -83,12 +83,14 @@ generate "provider_aws" {
 generate "tofu_version" {
   path = ".opentofu-version"
   if_exists = "overwrite"
+  disable_signature = true
   contents = file("${get_repo_root()}/.opentofu-version")
 }
 
 generate "tg_version" {
   path = ".terragrunt-version"
   if_exists = "overwrite"
+  disable_signature = true
   contents = file("${get_repo_root()}/.terragrunt-version")
 }
 
