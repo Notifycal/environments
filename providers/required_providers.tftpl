@@ -1,0 +1,9 @@
+terraform {
+  required_providers {
+%{ for name, provider_config in required_providers ~}
+    ${name} = {%{ for key, value in provider_config }
+      ${key} = "${value}"
+    %{ endfor }}
+%{ endfor ~}
+  }
+}
