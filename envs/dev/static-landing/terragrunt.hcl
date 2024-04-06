@@ -4,6 +4,8 @@ include "root" {
 include "stack" {
   path = "${get_repo_root()}/stacks/${basename(get_terragrunt_dir())}/terragrunt.hcl"
 }
+
 inputs = {
-  comp_specific = "foo"
+  # How can we make this "notifycal-<stack>-<environment>" ?
+  bucket_name = "notifycal-static-landing-dev"
 }

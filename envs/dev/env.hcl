@@ -1,7 +1,7 @@
 locals {
   environment = "dev"
   stack_versions = {
-    comp1 = ""
+    static-landing = "v1.0.1"
     comp2 = ""
     comp3 = ""
   }
