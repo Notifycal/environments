@@ -6,6 +6,4 @@ include "stack" {
 }
 
 inputs = {
-  # How can we make this "notifycal-<stack>-<environment>" ?
-  bucket_name = "notifycal-static-landing-dev"
 }
