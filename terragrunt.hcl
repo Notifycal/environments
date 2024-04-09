@@ -56,6 +56,7 @@ terraform {
 
 remote_state = local.remote_state
 inputs = merge(local.merged_inputs, { _tags = local.stack_tags })
+terraform_binary = "tofu"
 
 generate "provider_versions" {
   path = "../${local.stack_providers_filename}"
