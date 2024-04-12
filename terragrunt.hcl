@@ -55,7 +55,13 @@ terraform {
 }
 
 remote_state     = local.remote_state
-inputs           = merge(local.merged_inputs, { _tags = local.stack_tags })
+inputs           = merge(
+  local.merged_inputs, 
+  { 
+    _tags = local.stack_tags,
+    _aws_region = local.merged_inputs.aws_region
+  }
+)
 terraform_binary = "tofu"
 
 generate "provider_versions" {

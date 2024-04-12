@@ -2,7 +2,7 @@ variable "_tags" {
   type = map(string)
 }
 
-variable "aws_region" {
+variable "_aws_region" {
   type = string
 }
 
@@ -11,7 +11,7 @@ locals {
 }
 
 provider "aws" {
-  region = var.aws_region
+  region = var._aws_region
 
   default_tags {
     tags = var._tags
