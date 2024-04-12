@@ -1,9 +1,9 @@
 locals {
   global_vars      = read_terragrunt_config(find_in_parent_folders("global.hcl"))
-  environment_vars = read_terragrunt_config(find_in_parent_folders("env.hcl"))
+  environment_vars = jsondecode(file(find_in_parent_folders("env.json")))
   merged_inputs = merge(
     local.global_vars.locals,
-    local.environment_vars.locals
+    local.environment_vars
   )
   stack_name    = basename(path_relative_to_include())
   stack_path    = "${get_repo_root()}/stacks/${local.stack_name}"
