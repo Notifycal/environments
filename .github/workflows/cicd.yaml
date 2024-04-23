@@ -72,5 +72,6 @@ jobs:
         run: |
           cd envs/dev/static-landing
           terragrunt run-all init
+          terragrunt run-all plan
       # - run: terragrunt run-all plan
           
