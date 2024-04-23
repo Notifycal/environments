@@ -30,11 +30,11 @@ jobs:
       - name: Install tenv
         run: |
           mkdir -p ~/.tenv && cd ~/.tenv
-          wget https://github.com/tofuutils/tenv/releases/download/${TENV_VERSION}/tenv_${TENV_VERSION}_${TENV_ARCH}.tar.gz -O tenv.tar.gz
+          wget -nv https://github.com/tofuutils/tenv/releases/download/${TENV_VERSION}/tenv_${TENV_VERSION}_${TENV_ARCH}.tar.gz -O tenv.tar.gz
           tar zxf tenv.tar.gz
           ls -la ~/.tenv
           rm -rf tenv.tar.gz
-          echo "$HOME/.tenv" >> "$GITHUB_PATH
+          echo "$HOME/.tenv" >> "$GITHUB_PATH"
         env:
           TENV_VERSION: v1.7.1
           TENV_ARCH: Linux_x86_64
