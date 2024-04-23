@@ -32,7 +32,6 @@ jobs:
           mkdir -p ~/.tenv && cd ~/.tenv
           wget -nv https://github.com/tofuutils/tenv/releases/download/${TENV_VERSION}/tenv_${TENV_VERSION}_${TENV_ARCH}.tar.gz -O tenv.tar.gz
           tar zxf tenv.tar.gz
-          ls -la ~/.tenv
           rm -rf tenv.tar.gz
           echo "$HOME/.tenv" >> "$GITHUB_PATH"
         env:
@@ -49,6 +48,9 @@ jobs:
 
       # TODO: AWS Auth
       
-      - run: terragrunt run-all init
+      - name: Run against dev
+        run: |
+          cd envs/dev
+          terragrunt run-all init
       # - run: terragrunt run-all plan
           
