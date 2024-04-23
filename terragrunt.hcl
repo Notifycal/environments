@@ -48,9 +48,23 @@ locals {
 terraform {
   before_hook "install_tg_and_tofu_versions" {
     commands    = ["init", "state", "import", "refresh", "output", "taint", "untaint", "plan", "apply"]
-    execute     = [get_env("SHELL", "/bin/bash"), "-ce", "tenv tg install && tenv tofu install"]
+    # Redirecting the output to stderr to avoid the output being captured by Terragrunt. Otherwise, `terragrunt output -json` won't return valid JSON.
+    execute     = [get_env("SHELL", "/bin/bash"), "-ce", "tenv tg install 1>&2 && tenv tofu install 1>&2"]
     working_dir = "${get_terragrunt_dir()}"
   }
+
+  after_hook "post_apply_stack" {
+    commands    = ["apply"]
+    execute     = [get_env("SHELL", "/bin/bash"), "-ce", "if [[ -f ci/post-apply.sh ]]; then ci/post-apply.sh ${local.stack_name} ${local.stack_version} ${get_terragrunt_dir()}; fi"]
+    working_dir = "${get_working_dir()}/.."
+  }
+
+  before_hook "pre_plan_apply_stack" {
+    commands    = ["plan", "apply"]
+    execute     = [get_env("SHELL", "/bin/bash"), "-ce", "if [[ -f ci/pre-plan-apply.sh ]]; then ci/pre-plan-apply.sh ${local.stack_name} ${local.stack_version} ${get_terragrunt_dir()}; fi"]
+    working_dir = "${get_working_dir()}/.."
+  }
+
   source = local.stack_version == "" ? local.stack_config.base_source_url : "${local.stack_config.base_source_url}?ref=${local.stack_version}"
 }
 
