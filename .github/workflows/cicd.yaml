@@ -68,9 +68,9 @@ jobs:
 
       # TODO: Leverage TG/TF cache
       
-      - name: Run against dev (static-landing for now)
+      - name: Init against dev
         run: |
-          cd envs/dev/static-landing
+          cd envs/dev
           terragrunt run-all init
           terragrunt run-all plan
       
