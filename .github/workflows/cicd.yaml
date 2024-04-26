@@ -77,7 +77,7 @@ jobs:
           GH_TOKEN: ${{ steps.gh-app-auth.outputs.token }}
       
       - name: Run apply against dev
-        run: terrragrunt run-all apply
+        run: terragrunt run-all apply
         # Apply only when merging to main branch
         if: github.event_name != 'pull_request'
         env: 
