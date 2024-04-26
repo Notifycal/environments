@@ -1,19 +1,19 @@
 variable "name" {
-  type = string
+  type    = string
   default = "localstack-main"
 }
 
 variable "volume_dir" {
-  type = string
+  type    = string
   default = "~/.cache/localstack/volume"
 }
 
 variable "docker_version" {
-  type = string
+  type    = string
   default = "3.3"
 }
 
 variable "debug" {
-  type = string
+  type    = string
   default = "0"
 }

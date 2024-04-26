@@ -67,7 +67,7 @@ locals {
 
 terraform {
   before_hook "install_tofu_version" {
-    commands    = ["init", "state", "import", "refresh", "output", "taint", "untaint", "plan", "apply"]
+    commands = ["init", "state", "import", "refresh", "output", "taint", "untaint", "plan", "apply"]
     # Redirecting the output to stderr to avoid the output being captured by Terragrunt. Otherwise, `terragrunt output -json` won't return valid JSON.
     execute     = [get_env("SHELL", "/bin/bash"), "-ce", "tenv tofu install 1>&2"]
     working_dir = "${get_terragrunt_dir()}"
@@ -88,11 +88,11 @@ terraform {
   source = local.stack_version == "" ? local.stack_config.base_source_url : "${local.stack_config.base_source_url}?ref=${local.stack_version}"
 }
 
-remote_state     = local.remote_state
-inputs           = merge(
-  local.merged_inputs, 
-  { 
-    _tags = local.stack_tags,
+remote_state = local.remote_state
+inputs = merge(
+  local.merged_inputs,
+  {
+    _tags       = local.stack_tags,
     _aws_region = local.merged_inputs.aws_region
   }
 )

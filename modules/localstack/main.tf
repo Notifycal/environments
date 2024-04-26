@@ -8,16 +8,16 @@ resource "docker_image" "localstack" {
 
 resource "docker_container" "localstack" {
   image = docker_image.localstack.image_id
-  name = var.name
+  name  = var.name
   ports {
-    ip = "127.0.0.1"
+    ip       = "127.0.0.1"
     external = "4566"
     internal = "4566"
   }
   dynamic "ports" {
     for_each = range(4510, 4560)
     content {
-      ip = "127.0.0.1"
+      ip       = "127.0.0.1"
       external = ports.value
       internal = ports.value
     }
@@ -29,12 +29,12 @@ resource "docker_container" "localstack" {
   mounts {
     source = "/var/run/docker.sock"
     target = "/var/run/docker.sock"
-    type = "bind"
+    type   = "bind"
   }
   mounts {
     source = pathexpand(var.volume_dir)
     target = "/var/lib/localstack"
-    type = "bind"
+    type   = "bind"
   }
   restart = "unless-stopped"
 }

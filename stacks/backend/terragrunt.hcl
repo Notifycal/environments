@@ -4,6 +4,6 @@ locals {
 }
 
 inputs = {
-  api_stage_name = local.environment
+  api_stage_name  = local.environment
   resource_suffix = local.environment
 }
