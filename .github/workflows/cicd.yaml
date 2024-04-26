@@ -1,0 +1,84 @@
+name: CI/CD
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+  pull_request: 
+    branches:
+      - main
+
+concurrency:
+  # github.head_ref is only set when the workflow was triggered by a pull_request and it
+  # contains the value of the source branch of the PR.
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  AWS_REGION: eu-west-1
+
+jobs:
+  dev:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref || github.ref_name }}
+
+      - name: Get GH token from Github App
+        id: gh-app-auth
+        uses: getsentry/action-github-app-token@v3
+        with:
+          app_id: ${{ secrets.NOTIFYCAL_CICD_APP_ID }}
+          private_key: ${{ secrets.NOTIFYCAL_CICD_APP_SECRET }}
+
+      - name: Hack for github internal repo access :(
+        run: git config --global url."https://foo:${{ steps.gh-app-auth.outputs.token }}@github.com".insteadOf ssh://git@github.com
+  
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ env.AWS_REGION }}
+          role-to-assume: ${{ secrets.AWS_IAM_ROLE_CI }}
+          role-session-name: run-${{ github.run_id }}
+      - run: aws sts get-caller-identity
+
+      - name: Install tenv
+        run: |
+          mkdir -p ~/.tenv && cd ~/.tenv
+          wget -nv "https://github.com/tofuutils/tenv/releases/download/${TENV_VERSION}/tenv_${TENV_VERSION}_${TENV_ARCH}.tar.gz" -O tenv.tar.gz
+          tar zxf tenv.tar.gz
+          rm -rf tenv.tar.gz
+          echo "$HOME/.tenv" >> "$GITHUB_PATH"
+        env:
+          TENV_VERSION: v1.7.1
+          TENV_ARCH: Linux_x86_64
+
+      - name: Install OpenTofu and Terragrunt
+        run: |
+          tenv tofu install
+          tenv tg install
+
+          terragrunt --version
+          tofu --version
+
+      # TODO: Leverage TG/TF cache
+      
+      - name: Init against dev
+        run: |
+          cd envs/dev
+          terragrunt run-all init
+          terragrunt run-all plan
+        env: 
+          GH_TOKEN: ${{ steps.gh-app-auth.outputs.token }}
+      
+      - name: Run apply against dev
+        run: terrragrunt run-all apply
+        # Apply only when merging to main branch
+        if: github.event_name != 'pull_request'
+        env: 
+          GH_TOKEN: ${{ steps.gh-app-auth.outputs.token }}

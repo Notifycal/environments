@@ -1,25 +1,25 @@
 locals {
-  global_vars = read_terragrunt_config(find_in_parent_folders("global.hcl"))
-  environment_vars = read_terragrunt_config(find_in_parent_folders("env.hcl"))
+  global_vars      = read_terragrunt_config(find_in_parent_folders("global.hcl"))
+  environment_vars = jsondecode(file(find_in_parent_folders("env.json")))
   merged_inputs = merge(
     local.global_vars.locals,
-    local.environment_vars.locals
+    local.environment_vars
   )
-  stack_name = basename(path_relative_to_include())
-  stack_path = "${get_repo_root()}/stacks/${local.stack_name}"
+  stack_name    = basename(path_relative_to_include())
+  stack_path    = "${get_repo_root()}/stacks/${local.stack_name}"
   stack_version = local.merged_inputs.stack_versions[local.stack_name]
 
   _is_ephemeral_deploy = get_env("EPHEMERAL_DEPLOY", "false")
   environment_tags = {
-      Project = local.merged_inputs.project_name
-      Region = local.merged_inputs.aws_region
-      Environment = local.merged_inputs.environment
-      Managed-By = "Terragrunt"
-      Ephemeral-Deploy = local._is_ephemeral_deploy
+    Project          = local.merged_inputs.project_name
+    Region           = local.merged_inputs.aws_region
+    Environment      = local.merged_inputs.environment
+    Managed-By       = "Terragrunt"
+    Ephemeral-Deploy = local._is_ephemeral_deploy
   }
   stack_tags = merge(
-    local.environment_tags, 
-    { 
+    local.environment_tags,
+    {
       Stack = local.stack_name
     }
   )
@@ -28,45 +28,86 @@ locals {
   remote_state = {
     backend = !local.is_local_env ? "s3" : "local"
     config = [{
-      bucket = "tofu-state-${local.merged_inputs.project_name}-${local.merged_inputs.environment}"
-      key = "${local.stack_name}/terraform.tfstate"
-      region = local.merged_inputs.aws_region
-      encrypt = true
-      dynamodb_table = "tofu-lock-${local.merged_inputs.project_name}-${local.merged_inputs.environment}"
-      s3_bucket_tags = local.environment_tags
+      bucket              = "tofu-state-${local.merged_inputs.project_name}-${local.merged_inputs.environment}"
+      key                 = "${local.stack_name}/terraform.tfstate"
+      region              = local.merged_inputs.aws_region
+      encrypt             = true
+      dynamodb_table      = "tofu-lock-${local.merged_inputs.project_name}-${local.merged_inputs.environment}"
+      s3_bucket_tags      = local.environment_tags
       dynamodb_table_tags = local.environment_tags
-    }, {}][!local.is_local_env ? 0 : 1 ]
+    }, {}][!local.is_local_env ? 0 : 1]
     generate = {
-      path = "_tg.backend.tf"
+      path      = "_tg.backend.tf"
       if_exists = "overwrite"
     }
   }
-  stack_config = jsondecode(file("${local.stack_path}/source.json"))
+  stack_config             = jsondecode(file("${local.stack_path}/source.json"))
   stack_providers_filename = "_tg.provider.versions.tf"
+
+  pre_plan_apply_hook_command = <<EOF
+  hook_script=ci/pre-plan-apply.sh
+  if [[ -f $${hook_script} ]]; then
+    echo "$${hook_script} file found!"
+    $${hook_script} ${local.stack_name} ${local.stack_version} ${get_terragrunt_dir()}
+  else
+    echo "No $${hook_script} file found, skipping."
+  fi
+  EOF
+
+  post_apply_hook_command = <<EOF
+  hook_script=ci/post-apply.sh
+  if [[ -f $${hook_script} ]]; then
+    echo "$${hook_script} file found!"
+    $${hook_script} ${local.stack_name} ${local.stack_version} ${get_terragrunt_dir()}
+  else
+    echo "No $${hook_script} file found, skipping."
+  fi
+  EOF
 }
 
 terraform {
-  before_hook "install_tg_and_tofu_versions" {
-    commands    = ["init", "state", "import", "refresh", "output", "taint", "untaint", "plan", "apply"]
-    execute     = [ get_env("SHELL", "/bin/bash"), "-ce", "tenv tg install && tenv tofu install"]
+  before_hook "install_tofu_version" {
+    commands = ["init", "state", "import", "refresh", "output", "taint", "untaint", "plan", "apply"]
+    # Redirecting the output to stderr to avoid the output being captured by Terragrunt. Otherwise, `terragrunt output -json` won't return valid JSON.
+    execute     = [get_env("SHELL", "/bin/bash"), "-ce", "tenv tofu install 1>&2"]
     working_dir = "${get_terragrunt_dir()}"
   }
+
+  after_hook "post_apply_stack" {
+    commands    = ["apply"]
+    execute     = [get_env("SHELL", "/bin/bash"), "-ce", local.post_apply_hook_command]
+    working_dir = "${get_working_dir()}/.."
+  }
+
+  before_hook "pre_plan_apply_stack" {
+    commands    = ["plan", "apply"]
+    execute     = [get_env("SHELL", "/bin/bash"), "-ce", local.pre_plan_apply_hook_command]
+    working_dir = "${get_working_dir()}/.."
+  }
+
   source = local.stack_version == "" ? local.stack_config.base_source_url : "${local.stack_config.base_source_url}?ref=${local.stack_version}"
 }
 
 remote_state = local.remote_state
-inputs = merge(local.merged_inputs, { _tags = local.stack_tags })
+inputs = merge(
+  local.merged_inputs,
+  {
+    _tags       = local.stack_tags,
+    _aws_region = local.merged_inputs.aws_region
+  }
+)
+terraform_binary = "tofu"
 
 generate "provider_versions" {
-  path = "../${local.stack_providers_filename}"
+  path      = "../${local.stack_providers_filename}"
   if_exists = "overwrite"
-  contents = templatefile("${get_repo_root()}/providers/required_providers.tftpl", { required_providers: local.stack_config.required_providers})
+  contents  = templatefile("${get_repo_root()}/providers/required_providers.tftpl", { required_providers : local.stack_config.required_providers })
 }
 
 generate "stack_provider_versions" {
-  path = local.stack_providers_filename
+  path      = local.stack_providers_filename
   if_exists = "overwrite"
-  contents = <<-EOF
+  contents  = <<-EOF
   module "stack_provider_versions" {
     source = "../"
   }
@@ -74,32 +115,34 @@ generate "stack_provider_versions" {
 }
 
 generate "provider_aws" {
-  disable = !can(local.stack_config.required_providers.aws)
-  path = "_tg.provider.aws.tf"
+  disable   = !can(local.stack_config.required_providers.aws)
+  path      = "_tg.provider.aws.tf"
   if_exists = "overwrite"
-  contents = file("${get_repo_root()}/providers/aws.tf")
+  contents  = file("${get_repo_root()}/providers/aws.tf")
 }
 
 generate "tofu_version" {
-  path = ".opentofu-version"
-  if_exists = "overwrite"
-  contents = file("${get_repo_root()}/.opentofu-version")
+  path              = ".opentofu-version"
+  if_exists         = "overwrite"
+  disable_signature = true
+  contents          = file("${get_repo_root()}/.opentofu-version")
 }
 
 generate "tg_version" {
-  path = ".terragrunt-version"
-  if_exists = "overwrite"
-  contents = file("${get_repo_root()}/.terragrunt-version")
+  path              = ".terragrunt-version"
+  if_exists         = "overwrite"
+  disable_signature = true
+  contents          = file("${get_repo_root()}/.terragrunt-version")
 }
 
 generate "vars" {
-  path = "_tg.variables.tf"
+  path      = "_tg.variables.tf"
   if_exists = "overwrite"
-  contents = file("${get_repo_root()}/stacks/variables.tf")
+  contents  = file("${get_repo_root()}/stacks/variables.tf")
 }
 
 dependency "localstack" {
-  enabled = local.is_local_env && local.stack_name != "localstack"
-  config_path = "${get_terragrunt_dir()}/../localstack"
+  enabled      = local.is_local_env && local.stack_name != "localstack"
+  config_path  = "${get_terragrunt_dir()}/../localstack"
   skip_outputs = true
 }

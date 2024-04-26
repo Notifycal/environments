@@ -1,0 +1,13 @@
+{
+  "base_source_url": "git@github.com:Notifycal/static-landing.git//tf",
+  "required_providers": {
+    "null": {
+      "source": "hashicorp/null",
+      "version": "~> 3.2"
+    },
+    "aws": {
+      "source": "hashicorp/aws",
+      "version": "~> 5.0"
+    }
+  }
+}
