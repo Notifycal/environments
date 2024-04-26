@@ -43,6 +43,26 @@ locals {
   }
   stack_config             = jsondecode(file("${local.stack_path}/source.json"))
   stack_providers_filename = "_tg.provider.versions.tf"
+
+  pre_plan_apply_hook_command = <<EOF
+  hook_script=ci/pre-plan-apply.sh
+  if [[ -f $${hook_script} ]]; then
+    echo "$${hook_script} file found!"
+    $${hook_script} ${local.stack_name} ${local.stack_version} ${get_terragrunt_dir()}
+  else
+    echo "No $${hook_script} file found, skipping."
+  fi
+  EOF
+
+  post_apply_hook_command = <<EOF
+  hook_script=ci/post-apply.sh
+  if [[ -f $${hook_script} ]]; then
+    echo "$${hook_script} file found!"
+    $${hook_script} ${local.stack_name} ${local.stack_version} ${get_terragrunt_dir()}
+  else
+    echo "No $${hook_script} file found, skipping."
+  fi
+  EOF
 }
 
 terraform {
@@ -55,13 +75,13 @@ terraform {
 
   after_hook "post_apply_stack" {
     commands    = ["apply"]
-    execute     = [get_env("SHELL", "/bin/bash"), "-ce", "if [[ -f ci/post-apply.sh ]]; then ci/post-apply.sh ${local.stack_name} ${local.stack_version} ${get_terragrunt_dir()}; fi"]
+    execute     = [get_env("SHELL", "/bin/bash"), "-ce", local.post_apply_hook_command]
     working_dir = "${get_working_dir()}/.."
   }
 
   before_hook "pre_plan_apply_stack" {
     commands    = ["plan", "apply"]
-    execute     = [get_env("SHELL", "/bin/bash"), "-ce", "if [[ -f ci/pre-plan-apply.sh ]]; then ci/pre-plan-apply.sh ${local.stack_name} ${local.stack_version} ${get_terragrunt_dir()}; fi"]
+    execute     = [get_env("SHELL", "/bin/bash"), "-ce", local.pre_plan_apply_hook_command]
     working_dir = "${get_working_dir()}/.."
   }
 
