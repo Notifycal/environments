@@ -6,7 +6,7 @@ on:
     branches:
       - main
     paths:
-      - '.github/workflows/*.yaml'
+      - ".github/workflows/*.yaml"
 
 jobs:
   actionlint:

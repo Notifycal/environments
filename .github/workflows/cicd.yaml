@@ -5,7 +5,7 @@ on:
   push:
     branches:
       - main
-  pull_request: 
+  pull_request:
     branches:
       - main
 
@@ -38,7 +38,7 @@ jobs:
 
       - name: Hack for github internal repo access :(
         run: git config --global url."https://foo:${{ steps.gh-app-auth.outputs.token }}@github.com".insteadOf ssh://git@github.com
-  
+
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -67,20 +67,21 @@ jobs:
           tofu --version
 
       # TODO: Leverage TG/TF cache
-      
+
       - name: Init against dev
         run: |
           cd envs/dev
           terragrunt run-all init
           terragrunt run-all plan
-        env: 
+        env:
           GH_TOKEN: ${{ steps.gh-app-auth.outputs.token }}
-      
+
       - name: Run apply against dev
         run: |
           cd envs/dev
           terragrunt run-all apply
         # Apply only when merging to main branch
         if: github.event_name != 'pull_request'
-        env: 
+        env:
+          TERRAGRUNT_NON_INTERACTIVE: "true"
           GH_TOKEN: ${{ steps.gh-app-auth.outputs.token }}
