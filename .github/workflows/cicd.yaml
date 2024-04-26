@@ -17,7 +17,6 @@ concurrency:
 
 env:
   AWS_REGION: eu-west-1
-  GH_TOKEN: ${{ github.token }}
 
 jobs:
   dev:
@@ -74,8 +73,12 @@ jobs:
           cd envs/dev
           terragrunt run-all init
           terragrunt run-all plan
+        env: 
+          GH_TOKEN: ${{ steps.gh-app-auth.outputs.token }}
       
       - name: Run apply against dev
         run: terrragrunt run-all apply
         # Apply only when merging to main branch
         if: github.event_name != 'pull_request'
+        env: 
+          GH_TOKEN: ${{ steps.gh-app-auth.outputs.token }}
