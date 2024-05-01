@@ -75,7 +75,7 @@ jobs:
           terragrunt run-all plan
         env:
           GH_TOKEN: ${{ steps.gh-app-auth.outputs.token }}
-          TF_VAR_cloudflare_api_token: ${{ secrets. TF_VAR_cloudflare_api_token }}
+          TF_VAR_cloudflare_api_token: ${{ secrets.TF_VAR_cloudflare_api_token }}
 
       - name: Run apply against dev
         run: |
@@ -86,4 +86,4 @@ jobs:
         env:
           TERRAGRUNT_NON_INTERACTIVE: "true"
           GH_TOKEN: ${{ steps.gh-app-auth.outputs.token }}
-          TF_VAR_cloudflare_api_token: ${{ secrets. TF_VAR_cloudflare_api_token }}
+          TF_VAR_cloudflare_api_token: ${{ secrets.TF_VAR_cloudflare_api_token }}
