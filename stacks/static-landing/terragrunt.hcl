@@ -4,5 +4,11 @@ locals {
 }
 
 inputs = {
-  bucket_name = "notifycal-${local.stack_name}-${local.environment}"
+  base_domain = "notifycal.com"
+  # Production does not require any prefixes in the domain/URLs
+  domain_prefix = local.environment == "prod" ? "" : local.environment
+  redirect_base_domains = [
+    "notifycal.es",
+    "notifical.es"
+  ]
 }

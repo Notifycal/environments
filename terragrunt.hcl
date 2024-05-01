@@ -121,6 +121,13 @@ generate "provider_aws" {
   contents  = file("${get_repo_root()}/providers/aws.tf")
 }
 
+generate "provider_cloudflare" {
+  disable   = !can(local.stack_config.required_providers.cloudflare)
+  path      = "_tg.provider.cloudflare.tf"
+  if_exists = "overwrite"
+  contents  = file("${get_repo_root()}/providers/cloudflare.tf")
+}
+
 generate "tofu_version" {
   path              = ".opentofu-version"
   if_exists         = "overwrite"
