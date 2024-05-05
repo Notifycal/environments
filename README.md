@@ -60,13 +60,31 @@ Above setup allows to use AWS CLI against localstack.
 
 # environments
 
- - local
- - dev
- - qa
+- local
+- dev
+- qa
 
 ## Stacks
 
- - comp1
- - comp2
- - comp3
- - localstack
+- static-landing
+- backend
+- localstack
+
+## Disable pre-apply/post-apply hooks using env vars.
+
+You can define any of the following environment variables when running `terragrunt` in order to stop the pre-plan-apply/post-apply hooks. This is useful for local development.
+
+- `TG_SKIP_HOOKS`: Disables both `pre` and `post` hooks.
+- `TG_SKIP_PRE_PLAN_HOOK`: Disables `pre` hook.
+- `TG_SKIP_POST_APPLY_HOOK`: Disables `post` hook.
+
+Example:
+
+```bash
+TG_SKIP_PRE_PLAN_HOOK=true terragrunt plan
+
+# or
+
+export TG_SKIP_PRE_PLAN_HOOK=true
+terragrunt plan
+```
