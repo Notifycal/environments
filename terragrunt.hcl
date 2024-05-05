@@ -46,21 +46,29 @@ locals {
 
   pre_plan_apply_hook_command = <<EOF
   hook_script=ci/pre-plan-apply.sh
-  if [[ -f $${hook_script} ]]; then
-    echo "$${hook_script} file found!"
-    $${hook_script} ${local.stack_name} ${local.stack_version} ${get_terragrunt_dir()}
+  if [[ "$${TG_SKIP_HOOKS}" == "true" || "$${TG_SKIP_PRE_PLAN_HOOK}" == "true" ]]; then
+    echo "The $${hook_script} hook has been disabled through an environment variable."
   else
-    echo "No $${hook_script} file found, skipping."
+    if [[ -f $${hook_script} ]]; then
+      echo "$${hook_script} file found!"
+      $${hook_script} ${local.stack_name} ${local.stack_version} ${get_terragrunt_dir()}
+    else
+      echo "No $${hook_script} file found, skipping."
+    fi
   fi
   EOF
 
   post_apply_hook_command = <<EOF
   hook_script=ci/post-apply.sh
-  if [[ -f $${hook_script} ]]; then
-    echo "$${hook_script} file found!"
-    $${hook_script} ${local.stack_name} ${local.stack_version} ${get_terragrunt_dir()}
+  if [[ "$${TG_SKIP_HOOKS}" == "true" || "$${TG_SKIP_POST_APPLY_HOOK}" == "true" ]]; then
+    echo "The $${hook_script} hook has been disabled through an environment variable."
   else
-    echo "No $${hook_script} file found, skipping."
+    if [[ -f $${hook_script} ]]; then
+      echo "$${hook_script} file found!"
+      $${hook_script} ${local.stack_name} ${local.stack_version} ${get_terragrunt_dir()}
+    else
+      echo "No $${hook_script} file found, skipping."
+    fi
   fi
   EOF
 }
