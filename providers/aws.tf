@@ -7,7 +7,7 @@ variable "_aws_region" {
 }
 
 locals {
-  is_local_env = var.environment == "local"
+  is_local_env = var._environment == "local"
 }
 
 provider "aws" {
