@@ -102,6 +102,7 @@ inputs = merge(
   {
     _tags       = local.stack_tags,
     _aws_region = local.merged_inputs.aws_region
+    _environment = local.merged_inputs.environment
   }
 )
 terraform_binary = "tofu"
