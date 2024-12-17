@@ -26,14 +26,24 @@ export AWS_PROFILE=notifycal
 
 ## Setup for local development
 
-In order to configure aws tf provider to use localstack, it is required to update your `~/.aws/config` and `~/.aws/credentials`.
+Nothing is required to be set so local environment can talk to localstack. Localstack docker container created by terragrunt needs some directory structure so it can map its volume. Therefore, unless [specified otherwise](https://github.com/Notifycal/environments/blob/ed5ef373d90a9cc804403e972209fb393d0e08e8/modules/localstack/variables.tf#L8) the following command needs to be executed the very first time docker localstack runs on your workstation.:
+
+```ini
+mkdir -p ~/.cache/localstack/volume
+```
+
+Everything else has been defined in terragrunt config.
+
+### AWS CLI against localstack
+
+In order to configure aws CLI to use localstack, it is required to update your `~/.aws/config` and `~/.aws/credentials`.
 
 ```ini
 # ~/.aws/credentials
 
 [notifycal-localstack]
-aws_access_key_id = ThisIsNotReal
-aws_secret_access_key = NeitherIsThis
+aws_access_key_id = foo
+aws_secret_access_key = bar
 ```
 
 ```ini
@@ -43,20 +53,13 @@ aws_secret_access_key = NeitherIsThis
 region = eu-west-1
 ouptut = json
 endpoint_url = http://localhost:4566
-services = localstack-s3
-
-[services localstack-s3]
-s3 =
-  endpoint_url = http://s3.localhost.localstack.cloud:4566
 ```
 
-Then, before running TG it is required to export the following environment variable, as per AWS docs:
+Then, use the profile configured above before running AWS CLI, as per AWS docs:
 
 ```bash
 export AWS_PROFILE=notifycal-localstack
 ```
-
-Above setup allows to use AWS CLI against localstack.
 
 # environments
 
