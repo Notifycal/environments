@@ -5,15 +5,32 @@ variable "name" {
 
 variable "volume_dir" {
   type    = string
+  // GOTCHA: this directory structure needs creating the very first time.
   default = "~/.cache/localstack/volume"
 }
 
 variable "docker_version" {
   type    = string
-  default = "3.3"
+  default = "4.0.3"
 }
 
 variable "debug" {
   type    = string
   default = "0"
+}
+
+variable "enabled_services" {
+  type    = list(string)
+  default = ["logs", "iam", "apigateway", "s3", "lambda", "dynamodb", "sqs", "sns"] 
+}
+
+variable "credentials" {
+  type    = object({
+    accessKeyId = string
+    secretAccessKey = string
+  })
+  default = {
+    accessKeyId = "foo"
+    secretAccessKey = "bar"
+  }
 }

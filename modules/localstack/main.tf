@@ -24,7 +24,10 @@ resource "docker_container" "localstack" {
   }
   env = [
     # LocalStack configuration: https://docs.localstack.cloud/references/configuration/ 
-    "DEBUG=${var.debug}"
+    "DEBUG=${var.debug}",
+    "SERVICES=${join(",", var.enabled_services)}",
+    "AWS_ACCESS_KEY_ID=foo",
+    "AWS_SECRET_ACCESS_KEY=bar"
   ]
   mounts {
     source = "/var/run/docker.sock"
