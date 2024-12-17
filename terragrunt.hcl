@@ -93,6 +93,16 @@ terraform {
     working_dir = "${get_working_dir()}/.."
   }
 
+  extra_arguments "localstack_auth" {
+    commands = ["init", "plan", "apply"]
+    arguments = []
+    env_vars = local.is_local_env ? {
+      AWS_ENDPOINT_URL="http://localhost:4566"
+      AWS_ACCESS_KEY_ID="foo"
+      AWS_SECRET_ACCESS_KEY="bar"
+    } : {}
+  }
+
   source = local.stack_version == "" ? local.stack_config.base_source_url : "${local.stack_config.base_source_url}?ref=${local.stack_version}"
 }
 
