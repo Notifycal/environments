@@ -9,9 +9,8 @@ inputs = {
   # TODO: Fix this, with multi level domains
   domain_prefix = local.environment == "prod" ? "private" : "private${local.environment}"
   
-  # TODO: Cloudflare TF provider ruleset issue stops us from using this
-  # redirect_base_domains = [
-  #   "notifycal.es",
-  #   "notifical.es"
-  # ]
+  redirect_base_domains = [
+    "notifycal.es",
+    "notifical.es"
+  ]
 }
