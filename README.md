@@ -1,6 +1,10 @@
+# environments
+[![CI/CD](https://github.com/Notifycal/environments/actions/workflows/cicd.yaml/badge.svg?event=push)](https://github.com/Notifycal/environments/actions/workflows/cicd.yaml)
+
+
 IaC describing Notifycal environments - based on AWS. Always reliable, always DRY.
 
-# Features
+## Features
 
 1. 3 level of config per environments.
 2. independent stack definitions based on directory structure.
@@ -12,11 +16,11 @@ IaC describing Notifycal environments - based on AWS. Always reliable, always DR
 8. stacks allow to configure providers if the concrete provider is used.
 9. local development based on [localstack](https://www.localstack.cloud/)
 
-# Setup
+## Setup
 
 1. Install [tofuutils/tenv](https://github.com/tofuutils/tenv).
 
-## Setup for Cloud
+### Setup for Cloud
 
 Export the following environment variable assuming there is a `notifycal` profile set up on your workstation.
 
@@ -24,7 +28,7 @@ Export the following environment variable assuming there is a `notifycal` profil
 export AWS_PROFILE=notifycal
 ```
 
-## Setup for local development
+### Setup for local development
 
 Nothing is required to be set so local environment can talk to localstack. Localstack docker container created by terragrunt needs some directory structure so it can map its volume. Therefore, unless [specified otherwise](https://github.com/Notifycal/environments/blob/ed5ef373d90a9cc804403e972209fb393d0e08e8/modules/localstack/variables.tf#L8) the following command needs to be executed the very first time docker localstack runs on your workstation.:
 
@@ -34,7 +38,7 @@ mkdir -p ~/.cache/localstack/volume
 
 Everything else has been defined in terragrunt config.
 
-### AWS CLI against localstack
+#### AWS CLI against localstack
 
 In order to configure aws CLI to use localstack, it is required to update your `~/.aws/config` and `~/.aws/credentials`.
 
@@ -61,7 +65,7 @@ Then, use the profile configured above before running AWS CLI, as per AWS docs:
 export AWS_PROFILE=notifycal-localstack
 ```
 
-# environments
+## environments
 
 - local
 - dev
@@ -73,7 +77,9 @@ export AWS_PROFILE=notifycal-localstack
 - backend
 - localstack
 
-## Disable pre-apply/post-apply hooks using env vars.
+## Tips and tricks
+
+### Disable pre-apply/post-apply hooks using env vars.
 
 You can define any of the following environment variables when running `terragrunt` in order to stop the pre-plan-apply/post-apply hooks. This is useful for local development.
 
