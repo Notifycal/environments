@@ -134,18 +134,18 @@ generate "stack_provider_versions" {
 }
 
 generate "provider_aws" {
-  disable   = !can(local.stack_config.required_providers.aws)
+  disable     = !can(local.stack_config.required_providers.aws)
   if_disabled = "remove_terragrunt"
-  if_exists = "overwrite"
+  if_exists   = "overwrite"
 
   path      = "_tg.provider.aws.tf"
   contents  = file("${get_repo_root()}/providers/aws.tf")
 }
 
 generate "provider_cloudflare" {
-  disable   = !can(local.stack_config.required_providers.cloudflare)
+  disable     = !can(local.stack_config.required_providers.cloudflare)
   if_disabled = "remove_terragrunt"
-  if_exists = "overwrite"
+  if_exists   = "overwrite"
 
   path      = "_tg.provider.cloudflare.tf"
   contents  = file("${get_repo_root()}/providers/cloudflare.tf")
