@@ -135,15 +135,19 @@ generate "stack_provider_versions" {
 
 generate "provider_aws" {
   disable   = !can(local.stack_config.required_providers.aws)
-  path      = "_tg.provider.aws.tf"
+  if_disabled = "remove_terragrunt"
   if_exists = "overwrite"
+
+  path      = "_tg.provider.aws.tf"
   contents  = file("${get_repo_root()}/providers/aws.tf")
 }
 
 generate "provider_cloudflare" {
   disable   = !can(local.stack_config.required_providers.cloudflare)
-  path      = "_tg.provider.cloudflare.tf"
+  if_disabled = "remove_terragrunt"
   if_exists = "overwrite"
+
+  path      = "_tg.provider.cloudflare.tf"
   contents  = file("${get_repo_root()}/providers/cloudflare.tf")
 }
 
@@ -167,22 +171,21 @@ generate "vars" {
   contents  = file("${get_repo_root()}/stacks/variables.tf")
 }
 
-generate "ssm_param" {
+generate "ssm_param_registration" {
+  disable     = try(!local.stack_config.register, true)
+  if_disabled = "remove_terragrunt"  // What to do if a file already exists at path and disable is set to true
+  if_exists   = "overwrite"
+
   path              = "_tg.register_service.tf"
-  if_exists         = "overwrite"
   disable_signature = true
 
   # This relies on some convention. TODO: Write docs:
-  # 1. module is expected to be name like the Stack
-  # 2. We expect the stack to expose an output: service_registration_url
-  # 3. The service/stack won't be registered the very first time as the output won't exist yet
+  # 1. We expect the stack to expose a local: _service_registration_url
   contents = <<EOF
 resource "aws_ssm_parameter" "service_registration" {
-  count = can(module.${local.stack_name}.service_registration_url) ? 1 : 0
-
   name        = "/notifycal/${local.merged_inputs.environment}/${local.stack_name}/url"
   type        = "String"
-  value       = try(module.${local.stack_name}.service_registration_url, "")
+  value       = local._service_registration_url
 }
 EOF
 }
