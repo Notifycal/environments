@@ -167,6 +167,26 @@ generate "vars" {
   contents  = file("${get_repo_root()}/stacks/variables.tf")
 }
 
+generate "ssm_param" {
+  path              = "_tg.register_service.tf"
+  if_exists         = "overwrite"
+  disable_signature = true
+
+  # This relies on some convention. TODO: Write docs:
+  # 1. module is expected to be name like the Stack
+  # 2. We expect the stack to expose an output: service_registration_url
+  # 3. The service/stack won't be registered the very first time as the output won't exist yet
+  contents = <<EOF
+resource "aws_ssm_parameter" "service_registration" {
+  count = can(module.${local.stack_name}.service_registration_url) ? 1 : 0
+
+  name        = "/notifycal/${local.merged_inputs.environment}/${local.stack_name}/url"
+  type        = "String"
+  value       = try(module.${local.stack_name}.service_registration_url, "")
+}
+EOF
+}
+
 dependency "localstack" {
   enabled      = local.is_local_env && local.stack_name != "localstack"
   config_path  = "${get_terragrunt_dir()}/../localstack"
