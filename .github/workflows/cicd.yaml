@@ -75,7 +75,7 @@ jobs:
           path: |
             **/.terragrunt-cache
           # Example key strategy including OS, hashed TF/HCL and JSON files, TF & TG versions
-          key: ${{ runner.os }}-terragrunt-${{ hashFiles('**/*.tf*', '**/*.hcl', '**/*.json', '.opentofu-version', '.terragrunt-version') }}
+          key: ${{ runner.os }}-terragrunt-cache-${{ hashFiles('**/*.tf*', '**/*.hcl', '**/*.json', '.opentofu-version', '.terragrunt-version') }}
 
       - name: 'Debug: Cache hit for terragrunt-cache?'
         if: steps.terragrunt-cache.outputs.cache-hit == 'true'
