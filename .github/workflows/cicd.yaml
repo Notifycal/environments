@@ -69,13 +69,19 @@ jobs:
         # Only if there is no cache
         if: steps.tbinaries-cache.outputs.cache-hit != 'true'
         run: |
-          curl -sLo tofu.tar.gz "https://github.com/opentofu/opentofu/releases/download/v${TOFU_VERSION}/tofu_${TOFU_VERSION}_linux_amd64.tar.gz"
-          curl -sLo terragrunt "https://github.com/gruntwork-io/terragrunt/releases/download/v${TG_VERSION}/terragrunt_linux_amd64"
-          
-          tar -zxf tofu.tar.gz
+          TEMP_DIR=$(mktemp -d)
+          TOFU_DOWNLOAD_URL="https://github.com/opentofu/opentofu/releases/download/v${TOFU_VERSION}/tofu_${TOFU_VERSION}_linux_amd64.tar.gz"
+          TG_DOWNLOAD_URL="https://github.com/gruntwork-io/terragrunt/releases/download/v${TG_VERSION}/terragrunt_linux_amd64"
 
-          chmod +x tofu terragrunt
-          sudo mv tofu terragrunt /usr/local/bin
+          curl -sL "${TOFU_DOWNLOAD_URL}" -o "${TEMP_DIR}/tofu.tar.gz"
+          curl -sL "${TG_DOWNLOAD_URL}" -o "${TEMP_DIR}/terragrunt" 
+          
+          tar -zxf "${TEMP_DIR}/tofu.tar.gz" -C "${TEMP_DIR}"
+
+          chmod +x "${TEMP_DIR}/tofu" "${TEMP_DIR}/terragrunt"
+          sudo mv "${TEMP_DIR}/tofu" "${TEMP_DIR}/terragrunt" /usr/local/bin
+
+          rm -rf "${TEMP_DIR}"
 
           terragrunt --version
           tofu --version
