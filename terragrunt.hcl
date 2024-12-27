@@ -74,12 +74,12 @@ locals {
 }
 
 terraform {
-  before_hook "install_tofu_version" {
-    commands = ["init", "state", "import", "refresh", "output", "taint", "untaint", "plan", "apply"]
-    # Redirecting the output to stderr to avoid the output being captured by Terragrunt. Otherwise, `terragrunt output -json` won't return valid JSON.
-    execute     = [get_env("SHELL", "/bin/bash"), "-ce", "tenv tofu install 1>&2"]
-    working_dir = "${get_terragrunt_dir()}"
-  }
+  # before_hook "install_tofu_version" {
+  #   commands = ["init", "state", "import", "refresh", "output", "taint", "untaint", "plan", "apply"]
+  #   # Redirecting the output to stderr to avoid the output being captured by Terragrunt. Otherwise, `terragrunt output -json` won't return valid JSON.
+  #   execute     = [get_env("SHELL", "/bin/bash"), "-ce", "tenv tofu install 1>&2"]
+  #   working_dir = "${get_terragrunt_dir()}"
+  # }
 
   after_hook "post_apply_stack" {
     commands    = ["apply"]
