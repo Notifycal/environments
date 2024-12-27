@@ -13,6 +13,5 @@
       "source": "cloudflare/cloudflare",
       "version": "~> 4.0"
     }
-  },
-  "register": true
+  }
 }
