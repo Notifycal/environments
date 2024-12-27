@@ -78,7 +78,7 @@ jobs:
           key: ${{ runner.os }}-terragrunt-${{ hashFiles('**/*.tf*', '**/*.hcl', '**/*.json', '.opentofu-version', '.terragrunt-version') }}
 
       - name: 'Debug: Cache hit for terragrunt-cache?'
-        if: steps.terragrunt-cache.outputs.cache-hit != 'true'
+        if: steps.terragrunt-cache.outputs.cache-hit == 'true'
         run: echo "Cache hit!!"
 
       - name: Plan against dev
