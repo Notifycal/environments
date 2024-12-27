@@ -47,24 +47,47 @@ jobs:
           role-session-name: run-${{ github.run_id }}
       - run: aws sts get-caller-identity
 
-      - name: Install tenv
+      # - name: Install tenv
+      #   run: |
+      #     mkdir -p ~/.tenv && cd ~/.tenv
+      #     wget -nv "https://github.com/tofuutils/tenv/releases/download/${TENV_VERSION}/tenv_${TENV_VERSION}_${TENV_ARCH}.tar.gz" -O tenv.tar.gz
+      #     tar zxf tenv.tar.gz
+      #     rm -rf tenv.tar.gz
+      #     echo "$HOME/.tenv" >> "$GITHUB_PATH"
+      #   env:
+      #     TENV_VERSION: v1.7.1
+      #     TENV_ARCH: Linux_x86_64
+      
+      - name: Get TF/TG version from version files
+        id: get_tf_tg_version
         run: |
-          mkdir -p ~/.tenv && cd ~/.tenv
-          wget -nv "https://github.com/tofuutils/tenv/releases/download/${TENV_VERSION}/tenv_${TENV_VERSION}_${TENV_ARCH}.tar.gz" -O tenv.tar.gz
-          tar zxf tenv.tar.gz
-          rm -rf tenv.tar.gz
-          echo "$HOME/.tenv" >> "$GITHUB_PATH"
-        env:
-          TENV_VERSION: v1.7.1
-          TENV_ARCH: Linux_x86_64
+          echo "tofu_version=$(cat .opentofu-version)" >> $GITHUB_OUTPUT
+          echo "terragrunt_version=$(cat .terragrunt-version)" >> $GITHUB_OUTPUT
+      
+      # - name: Install OpenTofu and Terragrunt
+      #   run: |
+      #     tenv tofu install
+      #     tenv tg install
 
+      #     terragrunt --version
+      #     tofu --version
+      
+      ## Cache stuff
       - name: Install OpenTofu and Terragrunt
         run: |
-          tenv tofu install
-          tenv tg install
+          curl -sLo tofu.tar.gz https://github.com/opentofu/opentofu/releases/download/v${TOFU_VERSION}/tofu_${TOFU_VERSION}_linux_amd64.tar.gz
+          curl -sLo terragrunt https://github.com/gruntwork-io/terragrunt/releases/download/v${TG_VERSION}/terragrunt_linux_amd64
+          
+          tar -zxf tofu.tar.gz
+
+          chmod +x terraform terragrunt
+          sudo mv terraform terragrunt /usr/local/bin
 
           terragrunt --version
           tofu --version
+        env:
+          TOFU_VERSION: ${{ steps.get_tf_tg_version.outputs.tofu_version }}
+          TG_VERSION: ${{ steps.get_tf_tg_version.outputs.terragrunt_version }}
 
       # TODO: Leverage TG/TF cache
       - name: Cache .terragrunt-cache
