@@ -47,17 +47,6 @@ jobs:
           role-session-name: run-${{ github.run_id }}
       - run: aws sts get-caller-identity
 
-      # - name: Install tenv
-      #   run: |
-      #     mkdir -p ~/.tenv && cd ~/.tenv
-      #     wget -nv "https://github.com/tofuutils/tenv/releases/download/${TENV_VERSION}/tenv_${TENV_VERSION}_${TENV_ARCH}.tar.gz" -O tenv.tar.gz
-      #     tar zxf tenv.tar.gz
-      #     rm -rf tenv.tar.gz
-      #     echo "$HOME/.tenv" >> "$GITHUB_PATH"
-      #   env:
-      #     TENV_VERSION: v1.7.1
-      #     TENV_ARCH: Linux_x86_64
-      
       - name: Get TF/TG version from version files
         id: get_tf_tg_version
         run: |
@@ -78,14 +67,6 @@ jobs:
           TOFU_VERSION: ${{ steps.get_tf_tg_version.outputs.tofu_version }}
           TG_VERSION: ${{ steps.get_tf_tg_version.outputs.terragrunt_version }}
 
-      # - name: Install OpenTofu and Terragrunt
-      #   run: |
-      #     tenv tofu install
-      #     tenv tg install
-
-      #     terragrunt --version
-      #     tofu --version
-      
       ## Cache stuff
       - name: Install OpenTofu and Terragrunt
         # Only if there is no cache
