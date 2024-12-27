@@ -68,7 +68,7 @@ jobs:
 
       # TODO: Leverage TG/TF cache
 
-      - name: Init against dev
+      - name: Plan against dev
         run: |
           cd envs/dev
           terragrunt run-all plan
@@ -76,7 +76,7 @@ jobs:
           GH_TOKEN: ${{ steps.gh-app-auth.outputs.token }}
           TF_VAR_cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
 
-      - name: Run apply against dev
+      - name: Apply against dev
         run: |
           cd envs/dev
           terragrunt run-all apply
