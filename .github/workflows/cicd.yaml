@@ -71,7 +71,6 @@ jobs:
       - name: Init against dev
         run: |
           cd envs/dev
-          terragrunt run-all init
           terragrunt run-all plan
         env:
           GH_TOKEN: ${{ steps.gh-app-auth.outputs.token }}
