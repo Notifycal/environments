@@ -71,13 +71,21 @@ locals {
     fi
   fi
   EOF
+
+  install_tofu_hook = <<EOF
+    if [[ $CI != "true" ]]; then
+      tenv tofu install 1>&2
+    else
+      echo "Skipping 'install_tofu_version' hook because CI == true." 1>&2
+    fi
+  EOF
 }
 
 terraform {
   before_hook "install_tofu_version" {
     commands = ["init", "state", "import", "refresh", "output", "taint", "untaint", "plan", "apply"]
     # Redirecting the output to stderr to avoid the output being captured by Terragrunt. Otherwise, `terragrunt output -json` won't return valid JSON.
-    execute     = [get_env("SHELL", "/bin/bash"), "-ce", "tenv tofu install 1>&2"]
+    execute     = [get_env("SHELL", "/bin/bash"), "-ce", local.install_tofu_hook]
     working_dir = "${get_terragrunt_dir()}"
   }
 
