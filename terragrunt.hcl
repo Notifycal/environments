@@ -76,7 +76,7 @@ locals {
     if [[ $CI != "true" ]]; then
       tenv tofu install 1>&2
     else
-      echo "Skipping hook because CI == true." 1>&2
+      echo "Skipping 'install_tofu_version' hook because CI == true." 1>&2
     fi
   EOF
 }
