@@ -97,8 +97,14 @@ jobs:
           # Cache all .terragrunt-cache folders in any subdirectory
           path: |
             **/.terragrunt-cache
-          # Example key strategy including OS, hashed TF/HCL and JSON files, TF & TG versions
-          key: ${{ runner.os }}-terragrunt-cache-${{ hashFiles('**/*.tf*', '**/*.hcl', '**/*.json', '.opentofu-version', '.terragrunt-version') }}
+          # Example key strategy including OS and files that contain versions
+          key: ${{ runner.os }}-terragrunt-cache-${{ hashFiles(
+            'envs/*/.terraform.lock.hcl',
+            'envs/*/env.json',
+            'stacks/*/source.json',
+            '.opentofu-version',
+            '.terragrunt-version'
+            ) }}
 
       - name: 'Debug: Cache hit for terragrunt-cache?'
         if: steps.terragrunt-cache.outputs.cache-hit == 'true'
