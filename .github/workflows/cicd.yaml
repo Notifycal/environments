@@ -64,6 +64,20 @@ jobs:
           echo "tofu_version=$(cat .opentofu-version)" >> $GITHUB_OUTPUT
           echo "terragrunt_version=$(cat .terragrunt-version)" >> $GITHUB_OUTPUT
       
+      - name: Cache tofu and terragrunt binaries
+        id: tbinaries-cache
+        uses: actions/cache@v4
+        with:
+          # Cache tofu and terragrunt binaries
+          path: |
+            /usr/local/bin/tofu
+            /usr/local/bin/terragrunt
+          # Example key strategy including OS and files that contain versions
+          key: ${{ runner.os }}-tofu-${{ env.TOFU_VERSION }}-tg-${{ env.TG_VERSION }}
+        env:
+          TOFU_VERSION: ${{ steps.get_tf_tg_version.outputs.tofu_version }}
+          TG_VERSION: ${{ steps.get_tf_tg_version.outputs.terragrunt_version }}
+
       # - name: Install OpenTofu and Terragrunt
       #   run: |
       #     tenv tofu install
@@ -74,6 +88,8 @@ jobs:
       
       ## Cache stuff
       - name: Install OpenTofu and Terragrunt
+        # Only if there is no cache
+        if: steps.tbinaries-cache.outputs.cache-hit != 'true'
         run: |
           curl -sLo tofu.tar.gz https://github.com/opentofu/opentofu/releases/download/v${TOFU_VERSION}/tofu_${TOFU_VERSION}_linux_amd64.tar.gz
           curl -sLo terragrunt https://github.com/gruntwork-io/terragrunt/releases/download/v${TG_VERSION}/terragrunt_linux_amd64
@@ -89,7 +105,6 @@ jobs:
           TOFU_VERSION: ${{ steps.get_tf_tg_version.outputs.tofu_version }}
           TG_VERSION: ${{ steps.get_tf_tg_version.outputs.terragrunt_version }}
 
-      # TODO: Leverage TG/TF cache
       - name: Cache .terragrunt-cache
         id: terragrunt-cache
         uses: actions/cache@v4
