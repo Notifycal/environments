@@ -80,8 +80,8 @@ jobs:
           
           tar -zxf tofu.tar.gz
 
-          chmod +x terraform terragrunt
-          sudo mv terraform terragrunt /usr/local/bin
+          chmod +x tofu terragrunt
+          sudo mv tofu terragrunt /usr/local/bin
 
           terragrunt --version
           tofu --version
