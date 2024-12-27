@@ -72,8 +72,8 @@ jobs:
         # Only if there is no cache
         if: steps.tbinaries-cache.outputs.cache-hit != 'true'
         run: |
-          curl -sLo tofu.tar.gz https://github.com/opentofu/opentofu/releases/download/v${TOFU_VERSION}/tofu_${TOFU_VERSION}_linux_amd64.tar.gz
-          curl -sLo terragrunt https://github.com/gruntwork-io/terragrunt/releases/download/v${TG_VERSION}/terragrunt_linux_amd64
+          curl -sLo tofu.tar.gz "https://github.com/opentofu/opentofu/releases/download/v${TOFU_VERSION}/tofu_${TOFU_VERSION}_linux_amd64.tar.gz"
+          curl -sLo terragrunt "https://github.com/gruntwork-io/terragrunt/releases/download/v${TG_VERSION}/terragrunt_linux_amd64"
           
           tar -zxf tofu.tar.gz
 
