@@ -67,6 +67,19 @@ jobs:
           tofu --version
 
       # TODO: Leverage TG/TF cache
+      - name: Cache .terragrunt-cache
+        id: terragrunt-cache
+        uses: actions/cache@v4
+        with:
+          # Cache all .terragrunt-cache folders in any subdirectory
+          path: |
+            **/.terragrunt-cache
+          # Example key strategy including OS, hashed TF/HCL and JSON files, TF & TG versions
+          key: ${{ runner.os }}-terragrunt-${{ hashFiles('**/*.tf*', '**/*.hcl', '**/*.json', '.opentofu-version', '.terragrunt-version') }}
+
+      - name: 'Debug: Cache hit for terragrunt-cache?'
+        if: steps.terragrunt-cache.outputs.cache-hit != 'true'
+        run: echo "Cache hit!!"
 
       - name: Plan against dev
         run: |
