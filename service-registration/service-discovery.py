@@ -79,34 +79,34 @@ def interpolate_skeleton(skel, resolved):
 
 
 def main(args):
-    # 0. Load mappings and skel files
+    # Load mappings and skel files
     with open(args.mappings_file, "r") as f:
         mappings = json.load(f)
 
     with open(args.skel_file, "r") as file:
         skel = file.read()
 
-    # 1. find interpolation keys in the skel file
+    # find interpolation keys in the skel file
     interpolation_keys = find_interpolation_keys(skel)
     print("Found potential interpolations in file:", file=sys.stderr)
     for placeholder in interpolation_keys:
         print(f"- {placeholder}", file=sys.stderr)
     print("", file=sys.stderr)  # New line
 
-    # 2. filter only the desired keys from mappings (source of truth)
+    # filter only the desired keys from mappings (source of truth)
     resolved = {}
     for key, value in mappings.items():
         if key in interpolation_keys:
-            # 3. interpolate `environment` in the value (SSM parameter name)
+            # interpolate `environment` in the value (SSM parameter name)
             ssm_path = Template(value).safe_substitute(environment=args.environment)
-            # 4. and retrieve the value from SSM
+            # and retrieve the value from SSM
             ssm_value = get_ssm_parameter(ssm_path, args.aws_region)
-            # 5. wrapping in single quotes to replace the whole value,
+            # wrapping in single quotes to replace the whole value,
             # and so we can set values to null too
             if ssm_value is not None:
                 resolved[key] = f"'{ssm_value}'"
 
-    # 6. Check what won't be resolved and resolve to null
+    # Check what won't be resolved and resolve to null
     unresolved_keys = [x for x in interpolation_keys if x not in resolved.keys()]
     if len(unresolved_keys) > 0:
         print(
@@ -114,7 +114,7 @@ def main(args):
             file=sys.stderr,
         )
         for placeholder in unresolved_keys:
-            resolved[placeholder] = "null"  # Move this bit up?
+            resolved[placeholder] = "null"
             print(f"- {placeholder}", file=sys.stderr)
         print("", file=sys.stderr)  # New line
         print(
@@ -126,7 +126,7 @@ def main(args):
             "All placeholders have been successfully interpolated.\n", file=sys.stderr
         )
 
-    # 4. Interpolate skel file
+    # Interpolate skel file
     final_config = interpolate_skeleton(skel, resolved)
     print(final_config)
 
