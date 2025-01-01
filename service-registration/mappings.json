@@ -1,0 +1,6 @@
+{
+  "googleClientId": "/providers/google/oauth2/client_secret",
+  "backendBaseUrl": "/providers/github/app/notifycal-ci-cd/appa_secret",
+  "staticLandingUrl": "/notifycal/${environment}/static-landing/url22",
+  "ssfataticLandingUrl2": "/notifycal/${environment}/static-landingasf/url22"
+}
