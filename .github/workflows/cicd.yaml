@@ -47,37 +47,76 @@ jobs:
           role-session-name: run-${{ github.run_id }}
       - run: aws sts get-caller-identity
 
-      - name: Install tenv
+      - name: Get TF/TG version from version files
+        id: get_tf_tg_version
         run: |
-          mkdir -p ~/.tenv && cd ~/.tenv
-          wget -nv "https://github.com/tofuutils/tenv/releases/download/${TENV_VERSION}/tenv_${TENV_VERSION}_${TENV_ARCH}.tar.gz" -O tenv.tar.gz
-          tar zxf tenv.tar.gz
-          rm -rf tenv.tar.gz
-          echo "$HOME/.tenv" >> "$GITHUB_PATH"
+          echo "tofu_version=$(cat .opentofu-version)" >> $GITHUB_OUTPUT
+          echo "terragrunt_version=$(cat .terragrunt-version)" >> $GITHUB_OUTPUT
+      
+      - name: Cached tofu and terragrunt binaries?
+        id: tbinaries-cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            /usr/local/bin/tofu
+            /usr/local/bin/terragrunt
+          key: ${{ runner.os }}-tofu-${{ env.TOFU_VERSION }}-tg-${{ env.TG_VERSION }}
         env:
-          TENV_VERSION: v1.7.1
-          TENV_ARCH: Linux_x86_64
+          TOFU_VERSION: ${{ steps.get_tf_tg_version.outputs.tofu_version }}
+          TG_VERSION: ${{ steps.get_tf_tg_version.outputs.terragrunt_version }}
 
       - name: Install OpenTofu and Terragrunt
+        # Only if there is no cache
+        if: steps.tbinaries-cache.outputs.cache-hit != 'true'
         run: |
-          tenv tofu install
-          tenv tg install
+          TEMP_DIR=$(mktemp -d)
+          TOFU_DOWNLOAD_URL="https://github.com/opentofu/opentofu/releases/download/v${TOFU_VERSION}/tofu_${TOFU_VERSION}_linux_amd64.tar.gz"
+          TG_DOWNLOAD_URL="https://github.com/gruntwork-io/terragrunt/releases/download/v${TG_VERSION}/terragrunt_linux_amd64"
+
+          curl -sL "${TOFU_DOWNLOAD_URL}" -o "${TEMP_DIR}/tofu.tar.gz"
+          curl -sL "${TG_DOWNLOAD_URL}" -o "${TEMP_DIR}/terragrunt" 
+          
+          tar -zxf "${TEMP_DIR}/tofu.tar.gz" -C "${TEMP_DIR}"
+
+          chmod +x "${TEMP_DIR}/tofu" "${TEMP_DIR}/terragrunt"
+          sudo mv "${TEMP_DIR}/tofu" "${TEMP_DIR}/terragrunt" /usr/local/bin
+
+          rm -rf "${TEMP_DIR}"
 
           terragrunt --version
           tofu --version
+        env:
+          TOFU_VERSION: ${{ steps.get_tf_tg_version.outputs.tofu_version }}
+          TG_VERSION: ${{ steps.get_tf_tg_version.outputs.terragrunt_version }}
 
-      # TODO: Leverage TG/TF cache
+      - name: Cached .terragrunt-cache?
+        id: terragrunt-cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            **/.terragrunt-cache
+          # Example key strategy including OS and files that contain versions
+          key: ${{ runner.os }}-terragrunt-cache-${{ hashFiles(
+            'envs/*/.terraform.lock.hcl',
+            'envs/*/env.json',
+            'stacks/*/source.json',
+            '.opentofu-version',
+            '.terragrunt-version'
+            ) }}
 
-      - name: Init against dev
+      - name: 'Debug: Cache hit for terragrunt-cache?'
+        if: steps.terragrunt-cache.outputs.cache-hit == 'true'
+        run: echo "Cache hit!!"
+
+      - name: Plan against dev
         run: |
           cd envs/dev
-          terragrunt run-all init
           terragrunt run-all plan
         env:
           GH_TOKEN: ${{ steps.gh-app-auth.outputs.token }}
           TF_VAR_cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
 
-      - name: Run apply against dev
+      - name: Apply against dev
         run: |
           cd envs/dev
           terragrunt run-all apply

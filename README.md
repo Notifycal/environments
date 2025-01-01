@@ -15,6 +15,7 @@ IaC describing Notifycal environments - based on AWS. Always reliable, always DR
 7. stack providers only include used providers accounting for minimum version defined by the module.
 8. stacks allow to configure providers if the concrete provider is used.
 9. local development based on [localstack](https://www.localstack.cloud/)
+10. a poor man's version of [service registration and discovery](#service-registration)
 
 ## Setup
 
@@ -65,63 +66,16 @@ Then, use the profile configured above before running AWS CLI, as per AWS docs:
 export AWS_PROFILE=notifycal-localstack
 ```
 
-## Service Registration / Service Discovery
+#### Provider caching
 
-### Registration
+When running `terragrunt` locally, we can enable the Provider cache so different environments don't have to download the same providers every time.
 
-We're using a simple approach where each stack will register itself if required. This is configurable with a boolean `register` flag in `stacks/<stack>/source.json`.
+To enable it, just set `TERRAGRUNT_PROVIDER_CACHE=1` (on .bashrc or before execution) and it will rely on the default Provider cache folder in the user's home (check [official docs](https://terragrunt.gruntwork.io/docs/features/provider-cache-server/)).
 
-The registration is against SSM, using a parameter name/key of the following shape:
-```
-/notifycal/<environment>/<stack>/url
-```
+This reduces the size of the `.terragrunt-cache/` folders within the environments/stacks, making it go from GBs to MBs.
 
-### Discovery
-
-As this applies mostly (uniquely?) to SPAs, each SPA will need to define a `config.skel.js` file:
-
-Example `.skel.js` file:
-```js
-// It's not valid JS yet.
-window.globalConfig = {
-  GOOGLE_CLIENT_ID: ${googleClientId},
-  BACKEND_BASE_URL: ${backendBaseUrl},
-  STATIC_LANDING_URL: ${staticLandingUrl}
-};
-```
-
-We also have a `mappings.json` file in this repo that maps skel templated "values" to SSM parameters:
-
-```json
-{
-  "googleClientId": "/notifycal/${environment}/providers/google/oauth2/client_secret",   // Not stack-dependant
-  "backendBaseUrl": "/notifycal/${environment}/backend/url",
-  "staticLandingUrl": "/notifycal/${environment}/static-landing/url",
-}
-```
-
-Note how the mappings file also exposes `environment` as something to template/interpolate.
-
-Now we can run the `service-discovery.py` program/script to generate a final config file for a given environment. This scripts resolves the `.skel.js` mappings with `mappings.json`, `environment` with the environment name, and retrieves each key from SSM.
-
-```
-$ python service-registration/service-discovery.py \
-  --environment prod \
-  --skel_file frontend.skel.js \
-  --mappings_file mappings.json > config.js
-```
-
-If a key is either not found in the mapping.json file, or in SSM, we'll automatically set it to `null`. That should trigger a failure when the frontend tries to process the config.
-
-#### Sample generated config.js file
-```js
-window.globalConfig = {
-  GOOGLE_CLIENT_ID: 'XXXXX-XXXXXXX.apps.googleusercontent.com',
-  BACKEND_BASE_URL: "https://apidev.notifycal.com",
-  // Example, in case a key is not in SSM or cannot resolve the mapping.
-  STATIC_LANDING_URL: null    
-};
-```
+## Service Registration
+Check [the docs](./service-registration/README.md) in the `service-registration` folder
 
 ## environments
 
