@@ -110,10 +110,10 @@ jobs:
 
       - name: Install service-discovery tool
         run: |
-          pushd service-registration
+          pushd service-registration > /dev/null
           cp service-discovery.py /usr/local/bin/service-discovery
           cp mappings.json /usr/local/bin/
-          popd
+          popd > /dev/null
           service-discovery -h
 
       - name: Plan against dev
