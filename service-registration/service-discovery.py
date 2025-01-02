@@ -18,7 +18,9 @@ def parse_args():
         "--environment", required=True, help="Environment (e.g., 'prod', 'dev')"
     )
     parser.add_argument(
-        "--mappings_file", required=True, help="Path to the mappings JSON file"
+        "--mappings_file",
+        required=False,
+        help="Path to the mappings JSON file. Defaults to mapping.json",
     )
     parser.add_argument("--skel_file", required=True, help="Path to the skeleton file")
     parser.add_argument(
@@ -81,8 +83,20 @@ def interpolate_skeleton(skel, resolved):
 
 
 def main(args):
+    if args.mappings_file is not None:
+        mappings_file = args.mappings_file
+    else:
+        mappings_file_name = "mappings.json"
+        print(
+            f"No mappings_file found, defaulting to: {mappings_file_name}",
+            file=sys.stderr,
+        )
+
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        mappings_file = os.path.join(script_dir, mappings_file_name)
+
     # Load mappings and skel files
-    with open(args.mappings_file, "r") as f:
+    with open(mappings_file, "r") as f:
         mappings = json.load(f)
 
     with open(args.skel_file, "r") as file:
