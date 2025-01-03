@@ -51,7 +51,7 @@ locals {
   else
     if [[ -f $${hook_script} ]]; then
       echo "$${hook_script} file found!"
-      $${hook_script} ${local.stack_name} ${local.stack_version} ${get_terragrunt_dir()}
+      $${hook_script} ${local.stack_name} ${local.stack_version} ${local.merged_inputs.environment} ${get_terragrunt_dir()}
     else
       echo "No $${hook_script} file found, skipping."
     fi
@@ -65,7 +65,7 @@ locals {
   else
     if [[ -f $${hook_script} ]]; then
       echo "$${hook_script} file found!"
-      $${hook_script} ${local.stack_name} ${local.stack_version} ${get_terragrunt_dir()}
+      $${hook_script} ${local.stack_name} ${local.stack_version} ${local.merged_inputs.environment} ${get_terragrunt_dir()}
     else
       echo "No $${hook_script} file found, skipping."
     fi
@@ -142,16 +142,20 @@ generate "stack_provider_versions" {
 }
 
 generate "provider_aws" {
-  disable   = !can(local.stack_config.required_providers.aws)
+  disable     = !can(local.stack_config.required_providers.aws)
+  if_disabled = "remove_terragrunt"
+  if_exists   = "overwrite"
+
   path      = "_tg.provider.aws.tf"
-  if_exists = "overwrite"
   contents  = file("${get_repo_root()}/providers/aws.tf")
 }
 
 generate "provider_cloudflare" {
-  disable   = !can(local.stack_config.required_providers.cloudflare)
+  disable     = !can(local.stack_config.required_providers.cloudflare)
+  if_disabled = "remove_terragrunt"
+  if_exists   = "overwrite"
+
   path      = "_tg.provider.cloudflare.tf"
-  if_exists = "overwrite"
   contents  = file("${get_repo_root()}/providers/cloudflare.tf")
 }
 
@@ -173,6 +177,25 @@ generate "vars" {
   path      = "_tg.variables.tf"
   if_exists = "overwrite"
   contents  = file("${get_repo_root()}/stacks/variables.tf")
+}
+
+generate "ssm_param_registration" {
+  disable     = try(!local.stack_config.register, true)
+  if_disabled = "remove_terragrunt"  // What to do if a file already exists at path and disable is set to true
+  if_exists   = "overwrite"
+
+  path              = "_tg.register_service.tf"
+  disable_signature = true
+
+  # This relies on some convention. TODO: Write docs:
+  # 1. We expect the stack to expose a local: _service_registration_url
+  contents = <<EOF
+resource "aws_ssm_parameter" "service_registration" {
+  name        = "/notifycal/${local.merged_inputs.environment}/${local.stack_name}/url"
+  type        = "String"
+  value       = local._service_registration_url
+}
+EOF
 }
 
 dependency "localstack" {

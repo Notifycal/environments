@@ -108,6 +108,14 @@ jobs:
         if: steps.terragrunt-cache.outputs.cache-hit == 'true'
         run: echo "Cache hit!!"
 
+      - name: Install service-discovery tool
+        run: |
+          pushd service-registration > /dev/null
+          cp service-discovery.py /usr/local/bin/service-discovery
+          cp mappings.json /usr/local/bin/
+          popd > /dev/null
+          service-discovery -h
+
       - name: Plan against dev
         run: |
           cd envs/dev

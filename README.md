@@ -15,6 +15,7 @@ IaC describing Notifycal environments - based on AWS. Always reliable, always DR
 7. stack providers only include used providers accounting for minimum version defined by the module.
 8. stacks allow to configure providers if the concrete provider is used.
 9. local development based on [localstack](https://www.localstack.cloud/)
+10. a poor man's version of [service registration and discovery](#service-registration)
 
 ## Setup
 
@@ -72,6 +73,9 @@ When running `terragrunt` locally, we can enable the Provider cache so different
 To enable it, just set `TERRAGRUNT_PROVIDER_CACHE=1` (on .bashrc or before execution) and it will rely on the default Provider cache folder in the user's home (check [official docs](https://terragrunt.gruntwork.io/docs/features/provider-cache-server/)).
 
 This reduces the size of the `.terragrunt-cache/` folders within the environments/stacks, making it go from GBs to MBs.
+
+## Service Registration
+Check [the docs](./service-registration/README.md) in the `service-registration` folder
 
 ## environments
 

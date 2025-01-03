@@ -1,0 +1,5 @@
+{
+  "googleClientId": "/notifycal/${environment}/google/oauth2/client_secret",
+  "backendBaseUrl": "/notifycal/${environment}/backend/url",
+  "staticLandingUrl": "/notifycal/${environment}/static-landing/url"
+}
