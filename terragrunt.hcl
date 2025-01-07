@@ -20,7 +20,8 @@ locals {
   stack_tags = merge(
     local.environment_tags,
     {
-      Stack = local.stack_name
+      Stack         = local.stack_name
+      Stack-Version = local.stack_version
     }
   )
   is_local_env = local.merged_inputs.environment == "local"
