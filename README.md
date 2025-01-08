@@ -104,7 +104,7 @@ $ export LOCAL_DEV=true
 $ terragrunt apply
 ```
 
-This will run any existing `ci/pre-plan-apply.local.sh` (or `ci/post-apply.local.sh`) living in the repository, unless you've [disabled the hooks](#disable-pre-applypost-apply-hooks-using-env-vars).
+This will run any existing `ci/pre-plan-apply.local.sh` (or `ci/post-apply.local.sh`) living in the repository, unless you've [disabled the hooks](#disable-hooks-using-env-vars).
 
 #### Provider caching
 
@@ -135,7 +135,7 @@ Check [the docs](./service-registration/README.md) in the `service-registration`
 
 ## Tips and tricks
 
-### Disable pre-apply/post-apply hooks using env vars.
+### Disable hooks using env vars.
 
 You can define any of the following environment variables when running `terragrunt` in order to stop the pre-plan-apply/post-apply hooks. This is useful for local development.
 
