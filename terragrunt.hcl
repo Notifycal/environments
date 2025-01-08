@@ -47,7 +47,8 @@ locals {
 
   pre_plan_apply_hook_command = <<EOF
   if [[ "$${LOCAL_DEV}" == "true" ]]; then
-    hook_script=ci/pre-plan-apply.local.sh
+    export OUT_DIR=$(realpath -q ${get_working_dir()}/../dist)
+    hook_script=${local.stack_config.base_source_url}/../ci/pre-plan-apply.local.sh
   else
     hook_script=ci/pre-plan-apply.sh
   fi
@@ -66,7 +67,7 @@ locals {
 
   post_apply_hook_command = <<EOF
   if [[ "$${LOCAL_DEV}" == "true" ]]; then
-    hook_script=ci/post-apply.local.sh
+    hook_script=${local.stack_config.base_source_url}/../ci/post-apply.local.sh
   else
     hook_script=ci/post-apply.sh
   fi
@@ -113,12 +114,12 @@ terraform {
   }
 
   extra_arguments "localstack_auth" {
-    commands = ["init", "plan", "apply"]
+    commands  = ["init", "plan", "apply"]
     arguments = []
     env_vars = local.is_local_env ? {
-      AWS_ENDPOINT_URL="http://localhost:4566"
-      AWS_ACCESS_KEY_ID="foo"
-      AWS_SECRET_ACCESS_KEY="bar"
+      AWS_ENDPOINT_URL      = "http://localhost:4566"
+      AWS_ACCESS_KEY_ID     = "foo"
+      AWS_SECRET_ACCESS_KEY = "bar"
     } : {}
   }
 
@@ -129,8 +130,8 @@ remote_state = local.remote_state
 inputs = merge(
   local.merged_inputs,
   {
-    _tags       = local.stack_tags,
-    _aws_region = local.merged_inputs.aws_region
+    _tags        = local.stack_tags,
+    _aws_region  = local.merged_inputs.aws_region
     _environment = local.merged_inputs.environment
   }
 )
@@ -157,8 +158,8 @@ generate "provider_aws" {
   if_disabled = "remove_terragrunt"
   if_exists   = "overwrite"
 
-  path      = "_tg.provider.aws.tf"
-  contents  = file("${get_repo_root()}/providers/aws.tf")
+  path     = "_tg.provider.aws.tf"
+  contents = file("${get_repo_root()}/providers/aws.tf")
 }
 
 generate "provider_cloudflare" {
@@ -166,8 +167,8 @@ generate "provider_cloudflare" {
   if_disabled = "remove_terragrunt"
   if_exists   = "overwrite"
 
-  path      = "_tg.provider.cloudflare.tf"
-  contents  = file("${get_repo_root()}/providers/cloudflare.tf")
+  path     = "_tg.provider.cloudflare.tf"
+  contents = file("${get_repo_root()}/providers/cloudflare.tf")
 }
 
 generate "tofu_version" {
@@ -192,7 +193,7 @@ generate "vars" {
 
 generate "ssm_param_registration" {
   disable     = try(!local.stack_config.register, true)
-  if_disabled = "remove_terragrunt"  // What to do if a file already exists at path and disable is set to true
+  if_disabled = "remove_terragrunt" // What to do if a file already exists at path and disable is set to true
   if_exists   = "overwrite"
 
   path              = "_tg.register_service.tf"

@@ -71,18 +71,20 @@ During regular deployment, we'll download a release from Github and deploy it. B
 
 In order to create ad-hoc builds, we expect the stack to expose a `ci/pre-plan-apply.local.sh` (or `ci/post-apply.local.sh`) script, in a similar fashion that it exposes a `ci/pre-plan-apply.sh` (and `ci/post-apply.sh`) for remote environments.
 
-Finally, just set the `LOCAL_DEV` env var to `true` before running Terragrunt. This will run any existing `ci/pre-plan-apply.local.sh` (or `ci/post-apply.local.sh`).
+Finally, just set the `LOCAL_DEV` env var to `true` before running Terragrunt while making sure `stacks/$stack_name/source.json[.base_source_url]` points at your `$stack_name` repository containing the source code change you are aiming to test - make sure you point at the `/tf` folder just like the real source_url pointing at Github release. e.g `/home/$(whoiam)/gitrepos/notifycal/backend//tf`. IMPORTANT: do NOT commit that change ever.
 
 ```bash
+# Ideal for a single command/stack
+$ LOCAL_DEV=true terragrunt apply
+```
+or 
+```bash
+# More useful for a session of local-dev across different stacks, etc.
 $ export LOCAL_DEV=true
 $ terragrunt apply
 ```
 
-or
-
-```bash
-$ LOCAL_DEV=true terragrunt apply
-```
+This will run any existing `ci/pre-plan-apply.local.sh` (or `ci/post-apply.local.sh`) living in the repository
 
 #### Provider caching
 
