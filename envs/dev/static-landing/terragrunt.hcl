@@ -8,5 +8,7 @@ include "stack" {
 inputs = {
   # doesn't work for non-prod
   enable_www_redirect = false
-  is_public = false
+  cloudflare_config = {
+    private_site_auth = {}
+  }
 }
