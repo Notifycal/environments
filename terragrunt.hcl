@@ -58,7 +58,7 @@ locals {
   else
     if [[ -f $${hook_script} ]]; then
       echo "$${hook_script} file found!"
-      $${hook_script} ${local.stack_name} ${local.stack_version}
+      $${hook_script} ${local.stack_name} ${local.stack_version} ${local.merged_inputs.environment} ${get_terragrunt_dir()}
     else
       echo "No $${hook_script} file found, skipping."
     fi
@@ -77,7 +77,7 @@ locals {
   else
     if [[ -f $${hook_script} ]]; then
       echo "$${hook_script} file found!"
-      $${hook_script} ${local.stack_name} ${local.stack_version}
+      $${hook_script} ${local.stack_name} ${local.stack_version} ${local.merged_inputs.environment} ${get_terragrunt_dir()}
     else
       echo "No $${hook_script} file found, skipping."
     fi
