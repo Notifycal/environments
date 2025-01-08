@@ -46,7 +46,12 @@ locals {
   stack_providers_filename = "_tg.provider.versions.tf"
 
   pre_plan_apply_hook_command = <<EOF
-  hook_script=ci/pre-plan-apply.sh
+  if [[ "$${LOCAL_DEV}" == "true" ]]; then
+    hook_script=ci/pre-plan-apply.local.sh
+  else
+    hook_script=ci/pre-plan-apply.sh
+  fi
+  
   if [[ "$${TG_SKIP_HOOKS}" == "true" || "$${TG_SKIP_PRE_PLAN_HOOK}" == "true" ]]; then
     echo "The $${hook_script} hook has been disabled through an environment variable."
   else
