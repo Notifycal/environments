@@ -26,7 +26,6 @@ resource "docker_container" "localstack" {
     # LocalStack configuration: https://docs.localstack.cloud/references/configuration/ 
     "DEBUG=${var.debug}",
     "SERVICES=${join(",", var.enabled_services)}",
-    "AWS_PROFILE=notifycal-localstack"
   ]
   mounts {
     source = "/var/run/docker.sock"
