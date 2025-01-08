@@ -3,8 +3,9 @@
 
 provider "registry.opentofu.org/cloudflare/cloudflare" {
   version     = "4.49.1"
-  constraints = "~> 4.0"
+  constraints = "4.49.1"
   hashes = [
+    "h1:QxAdVX/40pPb7j39YBAD0J3eYqpnXJs4C2h5Q7wVYiU=",
     "h1:z4oKPWJNl2HKC+RMASmezyNnRY5+a6G4/mKcOpNBZIg=",
     "zh:0b8b0d1e843e30538e62855b7c4b8d6a31b19213c238b5f92bfd88ef6c0e78f0",
     "zh:485799332114da08e683f2b7ebf0d25f73d2f1542ebe30ef33fe66902b700120",
@@ -26,9 +27,10 @@ provider "registry.opentofu.org/cloudflare/cloudflare" {
 
 provider "registry.opentofu.org/hashicorp/aws" {
   version     = "5.82.2"
-  constraints = "~> 5.0"
+  constraints = "5.82.2"
   hashes = [
     "h1:65B6GjFmKobkuaO58AcDPUu/otnTR7qRTynWTgU5A7Q=",
+    "h1:9QRxRf9iCT7UPymoHdcif0DcKwKAM/PiQ75VBrl9W+o=",
     "zh:0c662b1f27119941e2329155070c8a81f6979e3d5e98296949f373c46487d84e",
     "zh:56cbaeaf050174bb9ba9a00f31fe441365ffece6ad39254885c9d4e6517e27e3",
     "zh:6e7f66c9f9955deb9ce0a2ae4b6df366b3b6bc3e23bca1fcdd4351ecab3ec907",
@@ -44,9 +46,10 @@ provider "registry.opentofu.org/hashicorp/aws" {
 
 provider "registry.opentofu.org/hashicorp/null" {
   version     = "3.2.3"
-  constraints = "~> 3.2"
+  constraints = "3.2.3"
   hashes = [
     "h1:LF8arSzHfhbyQSFtTMTYEqCM34klzrbAQBJMHYCs9d8=",
+    "h1:LN7WjQlMDIYGsXlum1kvMk5M8XzS2gzPTHmbEkxB6B0=",
     "zh:1d57d25084effd3fdfd902eca00020b34b1fb020253b84d7dd471301606015ac",
     "zh:65b7f9799b88464d9c2ec529713b7f52ea744275b61a8dc86cdedab1b2dcb933",
     "zh:80d3e9c95b7b4ae7c54005cd127cae82e5c53d2b7023ef24c147337bac9dadd9",
