@@ -6,6 +6,5 @@ include "stack" {
 }
 
 inputs = {
-  cloudflare_enabled                = false
   api_gateway_custom_domain_enabled = false
 }
