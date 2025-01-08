@@ -104,7 +104,7 @@ $ export LOCAL_DEV=true
 $ terragrunt apply
 ```
 
-This will run any existing `ci/pre-plan-apply.local.sh` (or `ci/post-apply.local.sh`) living in the repository, unless you've [disabled the hooks](disable_pre_apply/post_apply_hooks_using_env_vars).
+This will run any existing `ci/pre-plan-apply.local.sh` (or `ci/post-apply.local.sh`) living in the repository, unless you've [disabled the hooks](#disable-pre-applypost-apply-hooks-using-env-vars).
 
 #### Provider caching
 
