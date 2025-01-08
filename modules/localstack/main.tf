@@ -25,7 +25,7 @@ resource "docker_container" "localstack" {
   env = [
     # LocalStack configuration: https://docs.localstack.cloud/references/configuration/ 
     "DEBUG=${var.debug}",
-    "SERVICES=${join(",", var.enabled_services)}",
+    "SERVICES=${join(",", var.enabled_services)}"
   ]
   mounts {
     source = "/var/run/docker.sock"
