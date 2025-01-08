@@ -21,7 +21,7 @@ variable "debug" {
 
 variable "enabled_services" {
   type    = list(string)
-  default = ["logs", "iam", "apigateway", "s3", "lambda", "dynamodb", "ssm", "sqs", "sns"] 
+  default = ["logs", "iam", "apigateway", "s3", "lambda", "dynamodb", "ssm", "sqs", "sns", "acm"] 
 }
 
 variable "credentials" {
