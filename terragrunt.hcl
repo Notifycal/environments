@@ -46,7 +46,12 @@ locals {
   stack_providers_filename = "_tg.provider.versions.tf"
 
   pre_plan_apply_hook_command = <<EOF
-  hook_script=ci/pre-plan-apply.sh
+  if [[ "$${LOCAL_DEV}" == "true" ]]; then
+    hook_script=ci/pre-plan-apply.local.sh
+  else
+    hook_script=ci/pre-plan-apply.sh
+  fi
+  
   if [[ "$${TG_SKIP_HOOKS}" == "true" || "$${TG_SKIP_PRE_PLAN_HOOK}" == "true" ]]; then
     echo "The $${hook_script} hook has been disabled through an environment variable."
   else
@@ -60,7 +65,12 @@ locals {
   EOF
 
   post_apply_hook_command = <<EOF
-  hook_script=ci/post-apply.sh
+  if [[ "$${LOCAL_DEV}" == "true" ]]; then
+    hook_script=ci/post-apply.local.sh
+  else
+    hook_script=ci/post-apply.sh
+  fi
+
   if [[ "$${TG_SKIP_HOOKS}" == "true" || "$${TG_SKIP_POST_APPLY_HOOK}" == "true" ]]; then
     echo "The $${hook_script} hook has been disabled through an environment variable."
   else
@@ -103,12 +113,10 @@ terraform {
   }
 
   extra_arguments "localstack_auth" {
-    commands = ["init", "plan", "apply"]
+    commands  = ["init", "plan", "apply"]
     arguments = []
     env_vars = local.is_local_env ? {
-      AWS_ENDPOINT_URL="http://localhost:4566"
-      AWS_ACCESS_KEY_ID="foo"
-      AWS_SECRET_ACCESS_KEY="bar"
+      AWS_ENDPOINT_URL      = "http://localhost:4566"
     } : {}
   }
 
@@ -119,8 +127,8 @@ remote_state = local.remote_state
 inputs = merge(
   local.merged_inputs,
   {
-    _tags       = local.stack_tags,
-    _aws_region = local.merged_inputs.aws_region
+    _tags        = local.stack_tags,
+    _aws_region  = local.merged_inputs.aws_region
     _environment = local.merged_inputs.environment
   }
 )
@@ -147,8 +155,8 @@ generate "provider_aws" {
   if_disabled = "remove_terragrunt"
   if_exists   = "overwrite"
 
-  path      = "_tg.provider.aws.tf"
-  contents  = file("${get_repo_root()}/providers/aws.tf")
+  path     = "_tg.provider.aws.tf"
+  contents = file("${get_repo_root()}/providers/aws.tf")
 }
 
 generate "provider_cloudflare" {
@@ -156,8 +164,8 @@ generate "provider_cloudflare" {
   if_disabled = "remove_terragrunt"
   if_exists   = "overwrite"
 
-  path      = "_tg.provider.cloudflare.tf"
-  contents  = file("${get_repo_root()}/providers/cloudflare.tf")
+  path     = "_tg.provider.cloudflare.tf"
+  contents = file("${get_repo_root()}/providers/cloudflare.tf")
 }
 
 generate "tofu_version" {
@@ -182,7 +190,7 @@ generate "vars" {
 
 generate "ssm_param_registration" {
   disable     = try(!local.stack_config.register, true)
-  if_disabled = "remove_terragrunt"  // What to do if a file already exists at path and disable is set to true
+  if_disabled = "remove_terragrunt" // What to do if a file already exists at path and disable is set to true
   if_exists   = "overwrite"
 
   path              = "_tg.register_service.tf"
