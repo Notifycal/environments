@@ -66,6 +66,24 @@ Then, use the profile configured above before running AWS CLI, as per AWS docs:
 export AWS_PROFILE=notifycal-localstack
 ```
 
+#### Creating ad-hoc build through .local hooks
+During regular deployment, we'll download a release from Github and deploy it. But that requires the code to be merged and released, which won't be ideal for local development both against localstack or the dev environment.
+
+In order to create ad-hoc builds, we expect the stack to expose a `ci/pre-plan-apply.local.sh` (or `ci/post-apply.local.sh`) script, in a similar fashion that it exposes a `ci/pre-plan-apply.sh` (and `ci/post-apply.sh`) for remote environments.
+
+Finally, just set the `LOCAL_DEV` env var to `true` before running Terragrunt. This will run any existing `ci/pre-plan-apply.local.sh` (or `ci/post-apply.local.sh`).
+
+```bash
+$ export LOCAL_DEV=true
+$ terragrunt apply
+```
+
+or
+
+```bash
+$ LOCAL_DEV=true terragrunt apply
+```
+
 #### Provider caching
 
 When running `terragrunt` locally, we can enable the Provider cache so different environments don't have to download the same providers every time.
