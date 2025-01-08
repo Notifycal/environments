@@ -66,12 +66,32 @@ Then, use the profile configured above before running AWS CLI, as per AWS docs:
 export AWS_PROFILE=notifycal-localstack
 ```
 
+#### Deploying local TF code (that is not released yet)
+In order to do this, we have to point Terragrunt to the absolute path of the local copy of the stack. This is done by modifying `base_source_url` in `stacks/<stack>/source.json`.
+
+> [!CAUTION]
+> Never commit this change. It's only for local deployment.
+
+```diff
+## stacks/backend/source.json
+{
+  - "base_source_url": "git@github.com:Notifycal/backend.git//tf",
+
+  + "base_source_url": "/Users/dan/dev/personal/notifycal/backend//tf",
+  ...
+}
+```
+
+Notice the double slash (`//`) before `tf`. This tells TF that the module is the entire backend folder, but it'll only be running code from within the `tf` folder.
+
 #### Creating ad-hoc build through .local hooks
+The above steps only cover deploying local TF code, but not local application code.
+
 During regular deployment, we'll download a release from Github and deploy it. But that requires the code to be merged and released, which won't be ideal for local development both against localstack or the dev environment.
 
 In order to create ad-hoc builds, we expect the stack to expose a `ci/pre-plan-apply.local.sh` (or `ci/post-apply.local.sh`) script, in a similar fashion that it exposes a `ci/pre-plan-apply.sh` (and `ci/post-apply.sh`) for remote environments.
 
-Finally, just set the `LOCAL_DEV` env var to `true` before running Terragrunt while making sure `stacks/$stack_name/source.json[.base_source_url]` points at your `$stack_name` repository containing the source code change you are aiming to test - make sure you point at the `/tf` folder just like the real source_url pointing at Github release. e.g `/home/$(whoiam)/gitrepos/notifycal/backend//tf`. IMPORTANT: do NOT commit that change ever.
+Finally, just set the `LOCAL_DEV` env var to `true` before running Terragrunt.
 
 ```bash
 # Ideal for a single command/stack
@@ -93,6 +113,10 @@ When running `terragrunt` locally, we can enable the Provider cache so different
 To enable it, just set `TERRAGRUNT_PROVIDER_CACHE=1` (on .bashrc or before execution) and it will rely on the default Provider cache folder in the user's home (check [official docs](https://terragrunt.gruntwork.io/docs/features/provider-cache-server/)).
 
 This reduces the size of the `.terragrunt-cache/` folders within the environments/stacks, making it go from GBs to MBs.
+
+## Pre/post hooks
+- TODO.
+
 
 ## Service Registration
 Check [the docs](./service-registration/README.md) in the `service-registration` folder
