@@ -135,6 +135,11 @@ Check [the docs](./service-registration/README.md) in the `service-registration`
 
 ## Tips and tricks
 
+### TF/TG Provider Lock for multiple architectures
+```bash
+terragrunt run-all providers lock -platform=linux_amd64 -platform=darwin_arm64
+```
+
 ### Disable hooks using env vars.
 
 You can define any of the following environment variables when running `terragrunt` in order to stop the pre-plan-apply/post-apply hooks. This is useful for local development.
