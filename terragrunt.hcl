@@ -47,8 +47,7 @@ locals {
 
   pre_plan_apply_hook_command = <<EOF
   if [[ "$${LOCAL_DEV}" == "true" ]]; then
-    export OUT_DIR=$(realpath -q ${get_working_dir()}/../dist)
-    hook_script=${local.stack_config.base_source_url}/../ci/pre-plan-apply.local.sh
+    hook_script=ci/pre-plan-apply.local.sh
   else
     hook_script=ci/pre-plan-apply.sh
   fi
@@ -67,7 +66,7 @@ locals {
 
   post_apply_hook_command = <<EOF
   if [[ "$${LOCAL_DEV}" == "true" ]]; then
-    hook_script=${local.stack_config.base_source_url}/../ci/post-apply.local.sh
+    hook_script=ci/post-apply.local.sh
   else
     hook_script=ci/post-apply.sh
   fi
@@ -118,8 +117,6 @@ terraform {
     arguments = []
     env_vars = local.is_local_env ? {
       AWS_ENDPOINT_URL      = "http://localhost:4566"
-      AWS_ACCESS_KEY_ID     = "foo"
-      AWS_SECRET_ACCESS_KEY = "bar"
     } : {}
   }
 
