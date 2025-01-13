@@ -6,5 +6,6 @@ include "stack" {
 }
 
 inputs = {
+  frontend_domain                   = "http://localhost:5173"
   api_gateway_custom_domain_enabled = false
 }
