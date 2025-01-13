@@ -23,3 +23,8 @@ variable "enabled_services" {
   type    = list(string)
   default = ["logs", "iam", "apigateway", "s3", "lambda", "dynamodb", "ssm", "sqs", "sns", "acm"] 
 }
+
+variable "expose_frontend" {
+  type = bool
+  default = false
+}
