@@ -87,9 +87,7 @@ Two options here:
 
 1) Running backend on Express i.e. `npm run dev` while being at backend repo. This option offers the shortest development loop in case you are only interested in making changes in lambdas exposed through API. It still relies on AWS resources created on Localstack such us DynamoDB, etc. So make sure, `tg apply` localstack stack for environments/envs/local/localstack.
 
-2) Running the whole backend on Localstack.
-
-First of all, you need to export AWS_PROFILE so that the AWS provider
+2) Running the whole backend on Localstack. For a higher degree of confidence, you can apply IaC against Localstack and use it as if it was hosted in AWS. First of all, you need to export AWS_PROFILE, as mentioned above - so that the terraform AWS provider uses the profile that points at Localstack. If you are also interested in testing local tf code or an adhoc build, even altogether if you wanted too, keep reading.
 
 ### Deploying local TF code (that is not released yet)
 In order to do this, we have to point Terragrunt to the absolute path of the local copy of the stack. This is done by modifying `base_source_url` in `stacks/<stack>/source.json`.
