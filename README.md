@@ -66,7 +66,30 @@ Then, use the profile configured above before running AWS CLI, as per AWS docs:
 export AWS_PROFILE=notifycal-localstack
 ```
 
-#### Deploying local TF code (that is not released yet)
+## Local Development
+
+You might pick one of the following options depending on what you are doing/want to achievea and the stack you are working on:
+
+### frontend
+
+For now, you should run frontend on Vite i.e. `npm run dev` while being at frontend repo. Depending on what backend frontend is configured to run against, you might need to tweak frontend/config/config.local.js by default config assumes frontend will be run against backend-on-express.
+
+IaC has not yet been optimised to deploy frontend on Localstack - although - not much is left to achieve it.
+TODO:
+ - adapt [post apply hook](https://github.com/Notifycal/frontend/blob/3ca659677e5ebf2e78a17de5d240579d1388e79e/ci/post-apply.sh#L49).
+ - Write a new post apply hook so one can build, package and deploy app on s3/localstack. Similar to the `LOCAL_DEV=true` explained later on this document. Motivation: at some point we might want to test out code changes as well as infra changes before exposing a PR. TLDR: shorthen the development loop and a bit less of _rocket-science_.
+ - Enable reverse proxy in localstack stack so that developers can use frontend up on http://localhost:5173 just like when running frontend on Vite. For now, disabled to avoid port clashing.
+ - Make sure service registration works for frontend by passing the right values. E.g backendUrl. ATM, backend stack stores a value in SSM that doesn't reflect where APIGW is deployed at on localstack.
+
+### backend
+
+Two options here:
+
+1) Running backend on Express i.e. `npm run dev` while being at backend repo. This option offers the shortest development loop in case you are only interested in making changes in lambdas exposed through API. It still relies on AWS resources created on Localstack such us DynamoDB, etc. So make sure, `tg apply` localstack stack for environments/envs/local/localstack.
+
+2) Running the whole backend on Localstack. For a higher degree of confidence, you can apply IaC against Localstack and use it as if it was hosted in AWS. First of all, you need to export AWS_PROFILE, as mentioned above - so that the terraform AWS provider uses the profile that points at Localstack. If you are also interested in testing local tf code or an adhoc build, even altogether if you wanted too, keep reading.
+
+### Deploying local TF code (that is not released yet)
 In order to do this, we have to point Terragrunt to the absolute path of the local copy of the stack. This is done by modifying `base_source_url` in `stacks/<stack>/source.json`.
 
 > [!CAUTION]

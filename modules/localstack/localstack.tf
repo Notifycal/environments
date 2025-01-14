@@ -37,5 +37,9 @@ resource "docker_container" "localstack" {
     target = "/var/lib/localstack"
     type   = "bind"
   }
+  network_mode = "bridge"
+  networks_advanced {
+    name = docker_network.localstack_network.name
+  }
   restart = "unless-stopped"
 }
