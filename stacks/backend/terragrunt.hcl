@@ -6,6 +6,18 @@ locals {
   base_domain = "notifycal.com"
 }
 
+dependency "env_secrets" {
+  config_path = "${get_terragrunt_dir()}/../env_secrets"
+
+  mock_outputs = {
+    google_oauth_client_id = "mock-client-id"
+    google_oauth_client_secret = "mock-client-secret"
+    google_oauth_redirect_url = "http://mock.redirect.url"
+  }
+
+  mock_outputs_allowed_terraform_commands = ["init", "validate"]
+}
+
 inputs = {
   base_domain = local.base_domain
 
@@ -21,4 +33,10 @@ inputs = {
     local.environment == "prod" ? "private" : "private${local.environment}",
     local.base_domain
   )
+
+  google_oauth_config = {
+    client_id = dependency.env_secrets.outputs.google_oauth_client_id
+    client_secret = dependency.env_secrets.outputs.google_oauth_client_secret
+    redirect_url = dependency.env_secrets.outputs.google_oauth_redirect_url
+  }
 }
