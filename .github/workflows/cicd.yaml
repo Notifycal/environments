@@ -50,8 +50,8 @@ jobs:
       - name: Get TF/TG version from version files
         id: get_tf_tg_version
         run: |
-          echo "tofu_version=$(cat .opentofu-version)" >> $GITHUB_OUTPUT
-          echo "terragrunt_version=$(cat .terragrunt-version)" >> $GITHUB_OUTPUT
+          echo "tofu_version=$(cat .opentofu-version)" >> "${GITHUB_OUTPUT}"
+          echo "terragrunt_version=$(cat .terragrunt-version)" >> "${GITHUB_OUTPUT}"
       
       - name: Cached tofu and terragrunt binaries?
         id: tbinaries-cache
@@ -89,24 +89,24 @@ jobs:
           TOFU_VERSION: ${{ steps.get_tf_tg_version.outputs.tofu_version }}
           TG_VERSION: ${{ steps.get_tf_tg_version.outputs.terragrunt_version }}
 
-      - name: Cached .terragrunt-cache?
-        id: terragrunt-cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            **/.terragrunt-cache
-          # Example key strategy including OS and files that contain versions
-          key: ${{ runner.os }}-terragrunt-cache-${{ hashFiles(
-            'envs/*/.terraform.lock.hcl',
-            'envs/*/env.json',
-            'stacks/*/source.json',
-            '.opentofu-version',
-            '.terragrunt-version'
-            ) }}
+      # - name: Cached .terragrunt-cache?
+      #   id: terragrunt-cache
+      #   uses: actions/cache@v4
+      #   with:
+      #     path: |
+      #       **/.terragrunt-cache
+      #     # Example key strategy including OS and files that contain versions
+      #     key: ${{ runner.os }}-terragrunt-cache-${{ hashFiles(
+      #       'envs/*/.terraform.lock.hcl',
+      #       'envs/*/env.json',
+      #       'stacks/*/source.json',
+      #       '.opentofu-version',
+      #       '.terragrunt-version'
+      #       ) }}
 
-      - name: 'Debug: Cache hit for terragrunt-cache?'
-        if: steps.terragrunt-cache.outputs.cache-hit == 'true'
-        run: echo "Cache hit!!"
+      # - name: 'Debug: Cache hit for terragrunt-cache?'
+      #   if: steps.terragrunt-cache.outputs.cache-hit == 'true'
+      #   run: echo "Cache hit!!"
 
       - name: Install service-discovery tool
         run: |
@@ -115,6 +115,14 @@ jobs:
           cp mappings.json /usr/local/bin/
           popd > /dev/null
           service-discovery -h
+
+      - name: Init against dev
+        run: |
+          cd envs/dev
+          terragrunt run-all init
+        env:
+          GH_TOKEN: ${{ steps.gh-app-auth.outputs.token }}
+          TF_VAR_cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
 
       - name: Plan against dev
         run: |
