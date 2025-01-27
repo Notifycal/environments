@@ -66,6 +66,17 @@ Then, use the profile configured above before running AWS CLI, as per AWS docs:
 export AWS_PROFILE=notifycal-localstack
 ```
 
+### Bootstrap environment/create environment secrets
+
+When first creating an environment, we need to explicitly apply the `env_secrets` stack.
+
+```bash
+$ cd env_secrets
+$ terragrunt apply
+```
+
+This stack only runs when invoked explicitly from its folder thanks to Terragrunt's `exclude` mechanism.
+
 ## Local Development
 
 You might pick one of the following options depending on what you are doing/want to achievea and the stack you are working on:
