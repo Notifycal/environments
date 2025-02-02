@@ -4,7 +4,7 @@ variable "name" {
 }
 
 variable "volume_dir" {
-  type    = string
+  type = string
   // GOTCHA: this directory structure needs creating the very first time.
   default = "~/.cache/localstack/volume"
 }
@@ -21,10 +21,10 @@ variable "debug" {
 
 variable "enabled_services" {
   type    = list(string)
-  default = ["logs", "iam", "apigateway", "s3", "lambda", "dynamodb", "ssm", "sqs", "sns", "acm"] 
+  default = ["logs", "iam", "apigateway", "s3", "lambda", "dynamodb", "ssm", "sqs", "sns", "acm", "events"]
 }
 
 variable "expose_frontend" {
-  type = bool
+  type    = bool
   default = false
 }

@@ -1,6 +1,6 @@
 resource "docker_image" "nginx" {
   count = var.expose_frontend ? 1 : 0
-  name = "nginx:stable-alpine"
+  name  = "nginx:stable-alpine"
 }
 
 resource "docker_container" "nginx" {
@@ -19,7 +19,7 @@ resource "docker_container" "nginx" {
   networks_advanced {
     name = docker_network.localstack_network.name
   }
-  restart      = "unless-stopped"
+  restart = "unless-stopped"
   lifecycle {
     ignore_changes = [
       ports # To avoid forced replacement. Mind, if you are planning to change the port, make sure you comment out this from here.
