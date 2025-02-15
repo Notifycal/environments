@@ -39,4 +39,9 @@ inputs = {
     client_secret = dependency.env_secrets.outputs.google_oauth_client_secret
     redirect_url = dependency.env_secrets.outputs.google_oauth_redirect_url
   }
+
+  vonage_auth_config = {
+    application_id = dependency.env_secrets.outputs.vonage_application_id
+    private_key = dependency.env_secrets.outputs.vonage_auth_private_key
+  }
 }
