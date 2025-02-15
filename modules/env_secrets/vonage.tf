@@ -1,6 +1,6 @@
 resource "aws_ssm_parameter" "vonage_application_id" {
   name  = "/notifycal/${var.environment}/providers/vonage/application-id"
-  type  = "String"
+  type  = "SecureString"
   value = var.vonage_application_id
 
   lifecycle {
