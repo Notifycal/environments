@@ -15,7 +15,20 @@ output "vonage_application_id" {
   value = var.vonage_application_id
 }
 
+output "vonage_auth_private_key_ssm_parameter_name" {
+  value = aws_ssm_parameter.vonage_private_key.name
+}
+
 output "vonage_auth_private_key" {
   value = var.vonage_auth_private_key
+  sensitive = true
+}
+
+output "vonage_auth_public_key_ssm_parameter_name" {
+  value = aws_ssm_parameter.vonage_public_key.name
+}
+
+output "vonage_auth_public_key" {
+  value = var.vonage_auth_public_key
   sensitive = true
 }
