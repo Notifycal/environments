@@ -6,4 +6,8 @@ include "stack" {
 }
 
 inputs = {
+  observability = {
+    slack_webhook_url = "https://hooks.slack.com/services/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"
+    slack_channel     = "#dev-alerting"
+  }
 }
