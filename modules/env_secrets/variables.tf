@@ -13,6 +13,10 @@ variable "google_oauth_redirect_url" {
   type = string
 }
 
+variable "vonage_api_key" {
+  type = string
+}
+
 variable "vonage_application_id" {
   type = string
 }

@@ -1,3 +1,13 @@
+resource "aws_ssm_parameter" "vonage_api_key" {
+  name  = "/notifycal/${var.environment}/providers/vonage/api-key"
+  type  = "String"
+  value = var.vonage_api_key
+
+  lifecycle {
+    prevent_destroy = true
+  }
+}
+
 resource "aws_ssm_parameter" "vonage_application_id" {
   name  = "/notifycal/${var.environment}/providers/vonage/application-id"
   type  = "SecureString"
