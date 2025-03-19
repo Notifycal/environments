@@ -28,16 +28,6 @@ resource "aws_ssm_parameter" "vonage_private_key" {
   }
 }
 
-resource "aws_ssm_parameter" "vonage_public_key" {
-  name  = "/notifycal/${var.environment}/providers/vonage/auth/jwt-public-key"
-  type  = "String"
-  value = var.vonage_auth_public_key
-
-  lifecycle {
-    prevent_destroy = true
-  }
-}
-
 resource "aws_ssm_parameter" "vonage_webhook_jwt_signing_secret" {
   name  = "/notifycal/${var.environment}/providers/vonage/auth/webhook-jwt-signing-secret"
   type  = "SecureString"

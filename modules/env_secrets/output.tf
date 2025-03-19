@@ -28,10 +28,6 @@ output "vonage_auth_private_key" {
   sensitive = true
 }
 
-output "vonage_auth_public_key_ssm_parameter_name" {
-  value = aws_ssm_parameter.vonage_public_key.name
-}
-
 output "vonage_webhook_jwt_signing_secret" {
   value = var.vonage_webhook_jwt_signing_secret
   sensitive = true
@@ -39,9 +35,4 @@ output "vonage_webhook_jwt_signing_secret" {
 
 output "vonage_webhook_jwt_signing_secret_ssm_parameter_name" {
   value = aws_ssm_parameter.vonage_webhook_jwt_signing_secret.name
-}
-
-output "vonage_auth_public_key" {
-  value = var.vonage_auth_public_key
-  sensitive = true
 }
