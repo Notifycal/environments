@@ -37,3 +37,13 @@ resource "aws_ssm_parameter" "vonage_public_key" {
     prevent_destroy = true
   }
 }
+
+resource "aws_ssm_parameter" "vonage_webhook_jwt_signing_secret" {
+  name  = "/notifycal/${var.environment}/providers/vonage/auth/webhook-jwt-signing-secret"
+  type  = "SecureString"
+  value = var.vonage_webhook_jwt_signing_secret
+
+  lifecycle {
+    prevent_destroy = true
+  }
+}
