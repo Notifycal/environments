@@ -41,7 +41,9 @@ inputs = {
   }
 
   vonage_auth_config = {
-    application_id = dependency.env_secrets.outputs.vonage_application_id
+    application_id          = dependency.env_secrets.outputs.vonage_application_id
     private_key_secret_path = dependency.env_secrets.outputs.vonage_auth_private_key_ssm_parameter_name
+    public_key_secret_path  = dependency.env_secrets.outputs.vonage_auth_public_key_ssm_parameter_name
+    api_key                 = dependency.env_secrets.outputs.vonage_api_key
   }
 }

@@ -11,6 +11,10 @@ output "google_oauth_redirect_url" {
   value = var.google_oauth_redirect_url
 }
 
+output "vonage_api_key" {
+  value = var.vonage_api_key
+}
+
 output "vonage_application_id" {
   value = var.vonage_application_id
 }
