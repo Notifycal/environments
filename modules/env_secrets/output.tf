@@ -32,7 +32,3 @@ output "vonage_webhook_jwt_signing_secret" {
   value = var.vonage_webhook_jwt_signing_secret
   sensitive = true
 }
-
-output "vonage_webhook_jwt_signing_secret_ssm_parameter_name" {
-  value = aws_ssm_parameter.vonage_webhook_jwt_signing_secret.name
-}
