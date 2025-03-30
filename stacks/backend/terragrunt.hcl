@@ -10,9 +10,9 @@ dependency "env_secrets" {
   config_path = "${get_terragrunt_dir()}/../env_secrets"
 
   mock_outputs = {
-    google_oauth_client_id = "mock-client-id"
+    google_oauth_client_id     = "mock-client-id"
     google_oauth_client_secret = "mock-client-secret"
-    google_oauth_redirect_url = "http://mock.redirect.url"
+    google_oauth_redirect_url  = "http://mock.redirect.url"
   }
 
   mock_outputs_allowed_terraform_commands = ["init", "validate"]
@@ -35,8 +35,15 @@ inputs = {
   )
 
   google_oauth_config = {
-    client_id = dependency.env_secrets.outputs.google_oauth_client_id
+    client_id     = dependency.env_secrets.outputs.google_oauth_client_id
     client_secret = dependency.env_secrets.outputs.google_oauth_client_secret
-    redirect_url = dependency.env_secrets.outputs.google_oauth_redirect_url
+    redirect_url  = dependency.env_secrets.outputs.google_oauth_redirect_url
+  }
+
+  vonage_auth_config = {
+    application_id             = dependency.env_secrets.outputs.vonage_application_id
+    private_key_secret_path    = dependency.env_secrets.outputs.vonage_auth_private_key_ssm_parameter_name
+    webhook_jwt_signing_secret = dependency.env_secrets.outputs.vonage_webhook_jwt_signing_secret
+    api_key                    = dependency.env_secrets.outputs.vonage_api_key
   }
 }
