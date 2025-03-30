@@ -46,11 +46,4 @@ inputs = {
     webhook_jwt_signing_secret = dependency.env_secrets.outputs.vonage_webhook_jwt_signing_secret
     api_key                    = dependency.env_secrets.outputs.vonage_api_key
   }
-
-  vonage_auth_config = {
-    application_id          = dependency.env_secrets.outputs.vonage_application_id
-    private_key_secret_path = dependency.env_secrets.outputs.vonage_auth_private_key_ssm_parameter_name
-    public_key_secret_path  = dependency.env_secrets.outputs.vonage_auth_public_key_ssm_parameter_name
-    api_key                 = dependency.env_secrets.outputs.vonage_api_key
-  }
 }
