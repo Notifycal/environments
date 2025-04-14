@@ -7,6 +7,12 @@ include "stack" {
 
 inputs = {
   observability = {
-    slack_channel     = "#dev-alerting"
+    alert_notifier = {
+      slack_channel = "#dev-alerting"
+    }
+    alert_config = {
+      treat_missing_data = "ignore"
+      notify_insufficient_data = false
+    }
   }
 }
