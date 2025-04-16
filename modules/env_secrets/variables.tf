@@ -25,7 +25,13 @@ variable "vonage_webhook_jwt_signing_secret" {
   type      = string
   sensitive = true
 }
+
 variable "vonage_auth_private_key" {
+  type      = string
+  sensitive = true
+}
+
+variable "mailgun_api_key" {
   type      = string
   sensitive = true
 }
