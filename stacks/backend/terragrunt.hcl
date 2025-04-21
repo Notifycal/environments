@@ -46,4 +46,8 @@ inputs = {
     webhook_jwt_signing_secret = dependency.env_secrets.outputs.vonage_webhook_jwt_signing_secret
     api_key                    = dependency.env_secrets.outputs.vonage_api_key
   }
+
+  mailgun_auth = {
+    api_key = dependency.env_secrets.outputs.mailgun_api_key
+  }
 }

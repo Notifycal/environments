@@ -32,3 +32,7 @@ output "vonage_webhook_jwt_signing_secret" {
   value = var.vonage_webhook_jwt_signing_secret
   sensitive = true
 }
+
+output "mailgun_api_key" {
+  value = var.mailgun_api_key
+}
