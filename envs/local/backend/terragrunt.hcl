@@ -11,5 +11,6 @@ inputs = {
 
   observability = null
   # This is a local environment, so we don't need to enable data protection
+  # plus LocalStack doesn't support it
   enable_data_protection = false
 }
