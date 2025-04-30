@@ -10,4 +10,6 @@ inputs = {
   api_gateway_custom_domain_enabled = false
 
   observability = null
+  # This is a local environment, so we don't need to enable data protection
+  enable_data_protection = false
 }
