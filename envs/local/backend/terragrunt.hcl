@@ -12,4 +12,11 @@ inputs = {
   observability              = null
   enable_xray_active_tracing = false
   enable_data_protection     = false
+
+  messaging_config = {
+    enabled = false
+  }
+  emailing_config = {
+    enabled = false
+  }
 }

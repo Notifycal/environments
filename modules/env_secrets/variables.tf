@@ -29,3 +29,7 @@ variable "vonage_auth_private_key" {
   type      = string
   sensitive = true
 }
+
+variable "mailgun_api_key" {
+  type = string
+}
