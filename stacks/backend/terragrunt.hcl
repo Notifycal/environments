@@ -50,4 +50,7 @@ inputs = {
   mailgun_auth = {
     api_key = dependency.env_secrets.outputs.mailgun_api_key
   }
+
+  stripe_admin_api_key     = dependency.env_secrets.outputs.stripe_admin_api_key
+  stripe_operating_api_key = dependency.env_secrets.outputs.stripe_operating_api_key
 }

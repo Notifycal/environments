@@ -33,3 +33,15 @@ variable "vonage_auth_private_key" {
 variable "mailgun_api_key" {
   type = string
 }
+
+variable "stripe_admin_api_key" {
+  description = "Stripe admin API key"
+  type        = string
+  sensitive   = true
+}
+
+variable "stripe_operating_api_key" {
+  description = "Stripe operating API key"
+  type        = string
+  sensitive   = true
+}
