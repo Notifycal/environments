@@ -16,10 +16,6 @@
     "cloudflare": {
       "source": "cloudflare/cloudflare",
       "version": "~> 4.0"
-    },
-    "stripe": {
-      "source": "lukasaron/stripe",
-      "version": "~> 3.3.0"
     }
   },
   "register": true

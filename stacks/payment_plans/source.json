@@ -1,0 +1,9 @@
+{
+  "base_source_url": "git@github.com:Notifycal/backend.git//tf/modules/stripe",
+  "required_providers": {
+    "stripe": {
+      "source": "lukasaron/stripe",
+      "version": "~> 3.3.0"
+    }
+  }
+}
