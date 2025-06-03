@@ -5,6 +5,10 @@ include "stack" {
   path = "${get_repo_root()}/stacks/${basename(get_terragrunt_dir())}/terragrunt.hcl"
 }
 
+locals {
+  mailgun_domain = "local.notifycal.com"
+}
+
 inputs = {
   frontend_domain                   = "http://localhost:5173"
   api_gateway_custom_domain_enabled = false
@@ -18,5 +22,13 @@ inputs = {
   }
   emailing_config = {
     enabled = false
+    sender = {
+      displayName = "Notifycal Dev"
+      email       = "info@${local.mailgun_domain}"
+    }
+  }
+  mailgun_config = {
+    base_url    = "https://api.mailgun-notifycal.net"
+    domain_name = local.mailgun_domain
   }
 }
