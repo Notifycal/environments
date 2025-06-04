@@ -13,6 +13,17 @@ dependency "env_secrets" {
     google_oauth_client_id     = "mock-client-id"
     google_oauth_client_secret = "mock-client-secret"
     google_oauth_redirect_url  = "http://mock.redirect.url"
+
+    mailgun_api_key = "mailgun_api_key"
+
+    stripe_admin_api_key = "stripe_admin_api_key"
+    stripe_operating_api_key = "stripe_operating_api_key"
+
+    vonage_api_key = "vonage_api_key"
+    vonage_application_id = "vonage_application_id"
+    vonage_auth_private_key = "vonage_auth_private_key"
+    vonage_auth_private_key_ssm_parameter_name = "vonage_auth_private_key_ssm_parameter_name"
+    vonage_webhook_jwt_signing_secret = "vonage_webhook_jwt_signing_secret"
   }
 
   mock_outputs_allowed_terraform_commands = ["init", "validate"]
