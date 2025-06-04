@@ -20,6 +20,36 @@ dependency "env_secrets" {
 
 dependency "payment_plans" {
   config_path = "${get_terragrunt_dir()}/../payment_plans"
+
+  mock_outputs = {
+    subscription_tiers = {
+      good = {
+        product_id = "good"
+        price_id   = "good"
+        name       = "good subscription tier"
+        price_eur  = 1000 # in cents
+      }
+      better = {
+        product_id = "better"
+        price_id   = "better"
+        name       = "better subscription tier"
+        price_eur  = 2000 # in cents
+      }
+      best = {
+        product_id = "best"
+        price_id   = "best"
+        name       = "best subscription tier"
+        price_eur  = 5000 # in cents
+      }
+    }
+    spain_tax_rate = {
+      id         = "spain"
+      percentage = 21
+      inclusive  = true
+    }
+  }
+
+  mock_outputs_allowed_terraform_commands = ["init", "validate"]
 }
 
 inputs = {
@@ -55,6 +85,6 @@ inputs = {
     api_key = dependency.env_secrets.outputs.mailgun_api_key
   }
 
-  subcription_tiers        = dependency.payment_plans.outputs.subscription_tiers
+  # subcription_tiers        = dependency.payment_plans.outputs.subscription_tiers
   stripe_operating_api_key = dependency.env_secrets.outputs.stripe_operating_api_key
 }
