@@ -1,5 +1,5 @@
 {
-  "base_source_url": "git@github.com:Notifycal/backend.git//tf",
+  "base_source_url": "/home/sj11/gitrepos/notifycal/backend//tf",
   "required_providers": {
     "null": {
       "source": "hashicorp/null",
@@ -16,6 +16,10 @@
     "cloudflare": {
       "source": "cloudflare/cloudflare",
       "version": "~> 4.0"
+    },
+    "restapi": {
+      "source": "Mastercard/restapi",
+      "version": "~> 2.0.1"
     }
   },
   "register": true
