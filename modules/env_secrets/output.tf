@@ -36,3 +36,13 @@ output "vonage_webhook_jwt_signing_secret" {
 output "mailgun_api_key" {
   value = var.mailgun_api_key
 }
+
+output "stripe_admin_api_key" {
+  value = var.stripe_admin_api_key
+  sensitive = true
+}
+
+output "stripe_operating_api_key" {
+  value = var.stripe_operating_api_key
+  sensitive = true
+}

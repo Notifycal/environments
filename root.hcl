@@ -116,7 +116,7 @@ terraform {
     commands  = ["init", "plan", "apply"]
     arguments = []
     env_vars = local.is_local_env ? {
-      AWS_ENDPOINT_URL      = "http://localhost:4566"
+      AWS_ENDPOINT_URL = "http://localhost:4566"
     } : {}
   }
 
@@ -166,6 +166,15 @@ generate "provider_cloudflare" {
 
   path     = "_tg.provider.cloudflare.tf"
   contents = file("${get_repo_root()}/providers/cloudflare.tf")
+}
+
+generate "provider_stripe" {
+  disable     = !can(local.stack_config.required_providers.stripe)
+  if_disabled = "remove_terragrunt"
+  if_exists   = "overwrite"
+
+  path     = "_tg.provider.stripe.tf"
+  contents = file("${get_repo_root()}/providers/stripe.tf")
 }
 
 generate "tofu_version" {
