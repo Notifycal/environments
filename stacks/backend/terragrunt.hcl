@@ -85,6 +85,6 @@ inputs = {
     api_key = dependency.env_secrets.outputs.mailgun_api_key
   }
 
-  # subcription_tiers        = dependency.payment_plans.outputs.subscription_tiers
+  subcription_tiers        = dependency.payment_plans.outputs.subscription_tiers
   stripe_operating_api_key = dependency.env_secrets.outputs.stripe_operating_api_key
 }
