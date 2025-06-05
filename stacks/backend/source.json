@@ -16,6 +16,10 @@
     "cloudflare": {
       "source": "cloudflare/cloudflare",
       "version": "~> 4.0"
+    },
+    "restapi": {
+      "source": "Mastercard/restapi",
+      "version": "~> 2.0.1"
     }
   },
   "register": true

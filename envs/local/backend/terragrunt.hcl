@@ -12,11 +12,9 @@ locals {
 inputs = {
   frontend_domain                   = "http://localhost:5173"
   api_gateway_custom_domain_enabled = false
-
-  observability              = null
-  enable_xray_active_tracing = false
-  enable_data_protection     = false
-
+  observability                     = null
+  enable_xray_active_tracing        = false
+  enable_data_protection            = false
   messaging_config = {
     enabled = false
   }

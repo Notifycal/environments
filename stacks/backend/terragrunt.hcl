@@ -16,14 +16,14 @@ dependency "env_secrets" {
 
     mailgun_api_key = "mailgun_api_key"
 
-    stripe_admin_api_key = "stripe_admin_api_key"
+    stripe_admin_api_key     = "stripe_admin_api_key"
     stripe_operating_api_key = "stripe_operating_api_key"
 
-    vonage_api_key = "vonage_api_key"
-    vonage_application_id = "vonage_application_id"
-    vonage_auth_private_key = "vonage_auth_private_key"
+    vonage_api_key                             = "vonage_api_key"
+    vonage_application_id                      = "vonage_application_id"
+    vonage_auth_private_key                    = "vonage_auth_private_key"
     vonage_auth_private_key_ssm_parameter_name = "vonage_auth_private_key_ssm_parameter_name"
-    vonage_webhook_jwt_signing_secret = "vonage_webhook_jwt_signing_secret"
+    vonage_webhook_jwt_signing_secret          = "vonage_webhook_jwt_signing_secret"
   }
 
   mock_outputs_allowed_terraform_commands = ["init", "validate"]
@@ -96,6 +96,7 @@ inputs = {
     api_key = dependency.env_secrets.outputs.mailgun_api_key
   }
 
-  subscription_tiers        = dependency.payment_plans.outputs.subscription_tiers
+  subscription_tiers       = dependency.payment_plans.outputs.subscription_tiers
   stripe_operating_api_key = dependency.env_secrets.outputs.stripe_operating_api_key
+  stripe_admin_api_key     = dependency.env_secrets.outputs.stripe_admin_api_key
 }
