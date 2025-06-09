@@ -48,11 +48,11 @@ jobs:
 
           echo "Check if we have global changes that affect all environments"
           if [[ "${{ steps.filter.outputs.global }}" == "true" ]]; then
-            echo "Global change detected -> run against all environments"
+            echo -e "\tGlobal change detected -> run against all environments"
             
             # Get env names from filters file, ignoring the "non-global" key
             FILTERS_FILE=".github/filters.yaml"
-            ENV_KEYS=$(yq 'keys | map(select(. != "global"))' "${FILTERS_FILE}")
+            ENV_KEYS=$(yq -o=json -I0 'keys | map(select(. != "global"))' "${FILTERS_FILE}")
 
             echo "envs=${ENV_KEYS}" >> "${GITHUB_OUTPUT}"
             exit 0
