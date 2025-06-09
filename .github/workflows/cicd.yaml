@@ -80,8 +80,7 @@ jobs:
       cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
     steps:
-      - run: echo "${matrix.env}"
-        id: env-name
+      - run: echo "${{ matrix.env }}"
       # - uses: actions/checkout@v4
       #   with:
       #     ref: ${{ github.head_ref || github.ref_name }}
