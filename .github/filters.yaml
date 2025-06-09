@@ -1,6 +1,6 @@
 dev: 'envs/dev/**'
 dev-dan: 'envs/dev-dan/**'
-dev-sj11: 'envs/dev-sj11/**'
+# dev-sj11: 'envs/dev-sj11/**'
 global:
   # Should modules be here?
   - modules/**

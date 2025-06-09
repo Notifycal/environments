@@ -69,6 +69,7 @@ jobs:
       matrix:
         env: ${{ fromJson(needs.filter-envs.outputs.envs) }}
     runs-on: ubuntu-latest
+    name: Deploy to ${{ matrix.env || github.event.inputs.target_env || 'all environments' }}
     permissions:
       contents: read
       id-token: write
@@ -80,102 +81,102 @@ jobs:
       cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
     steps:
-      - run: echo "${{ matrix.env }}"
-      # - uses: actions/checkout@v4
-      #   with:
-      #     ref: ${{ github.head_ref || github.ref_name }}
+      - run: echo "Deploying against ${{ matrix.env }} environment"
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref || github.ref_name }}
 
-      # - name: Get GH token from Github App
-      #   id: gh-app-auth
-      #   uses: getsentry/action-github-app-token@v3
-      #   with:
-      #     app_id: ${{ secrets.NOTIFYCAL_CICD_APP_ID }}
-      #     private_key: ${{ secrets.NOTIFYCAL_CICD_APP_SECRET }}
+      - name: Get GH token from Github App
+        id: gh-app-auth
+        uses: getsentry/action-github-app-token@v3
+        with:
+          app_id: ${{ secrets.NOTIFYCAL_CICD_APP_ID }}
+          private_key: ${{ secrets.NOTIFYCAL_CICD_APP_SECRET }}
 
-      # - name: Hack for github internal repo access :(
-      #   run: git config --global url."https://foo:${{ steps.gh-app-auth.outputs.token }}@github.com".insteadOf ssh://git@github.com
+      - name: Hack for github internal repo access :(
+        run: git config --global url."https://foo:${{ steps.gh-app-auth.outputs.token }}@github.com".insteadOf ssh://git@github.com
 
-      # - name: Configure AWS Credentials
-      #   uses: aws-actions/configure-aws-credentials@v4
-      #   with:
-      #     aws-region: ${{ env.AWS_REGION }}
-      #     role-to-assume: ${{ secrets.AWS_IAM_ROLE_CI }}
-      #     role-session-name: run-${{ github.run_id }}
-      # - run: aws sts get-caller-identity
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ env.AWS_REGION }}
+          role-to-assume: ${{ secrets.AWS_IAM_ROLE_CI }}
+          role-session-name: run-${{ github.run_id }}
+      - run: aws sts get-caller-identity
 
-      # - name: Get TF/TG version from version files
-      #   id: get_tf_tg_version
-      #   run: |
-      #     echo "tofu_version=$(cat .opentofu-version)" >> "${GITHUB_OUTPUT}"
-      #     echo "terragrunt_version=$(cat .terragrunt-version)" >> "${GITHUB_OUTPUT}"
+      - name: Get TF/TG version from version files
+        id: get_tf_tg_version
+        run: |
+          echo "tofu_version=$(cat .opentofu-version)" >> "${GITHUB_OUTPUT}"
+          echo "terragrunt_version=$(cat .terragrunt-version)" >> "${GITHUB_OUTPUT}"
       
-      # - name: Cached tofu and terragrunt binaries?
-      #   id: tbinaries-cache
-      #   uses: actions/cache@v4
-      #   with:
-      #     path: |
-      #       /usr/local/bin/tofu
-      #       /usr/local/bin/terragrunt
-      #     key: ${{ runner.os }}-tofu-${{ env.TOFU_VERSION }}-tg-${{ env.TG_VERSION }}
-      #   env:
-      #     TOFU_VERSION: ${{ steps.get_tf_tg_version.outputs.tofu_version }}
-      #     TG_VERSION: ${{ steps.get_tf_tg_version.outputs.terragrunt_version }}
+      - name: Cached tofu and terragrunt binaries?
+        id: tbinaries-cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            /usr/local/bin/tofu
+            /usr/local/bin/terragrunt
+          key: ${{ runner.os }}-tofu-${{ env.TOFU_VERSION }}-tg-${{ env.TG_VERSION }}
+        env:
+          TOFU_VERSION: ${{ steps.get_tf_tg_version.outputs.tofu_version }}
+          TG_VERSION: ${{ steps.get_tf_tg_version.outputs.terragrunt_version }}
 
-      # - name: Install OpenTofu and Terragrunt
-      #   # Only if there is no cache
-      #   if: steps.tbinaries-cache.outputs.cache-hit != 'true'
-      #   run: |
-      #     TEMP_DIR=$(mktemp -d)
-      #     TOFU_DOWNLOAD_URL="https://github.com/opentofu/opentofu/releases/download/v${TOFU_VERSION}/tofu_${TOFU_VERSION}_linux_amd64.tar.gz"
-      #     TG_DOWNLOAD_URL="https://github.com/gruntwork-io/terragrunt/releases/download/v${TG_VERSION}/terragrunt_linux_amd64"
+      - name: Install OpenTofu and Terragrunt
+        # Only if there is no cache
+        if: steps.tbinaries-cache.outputs.cache-hit != 'true'
+        run: |
+          TEMP_DIR=$(mktemp -d)
+          TOFU_DOWNLOAD_URL="https://github.com/opentofu/opentofu/releases/download/v${TOFU_VERSION}/tofu_${TOFU_VERSION}_linux_amd64.tar.gz"
+          TG_DOWNLOAD_URL="https://github.com/gruntwork-io/terragrunt/releases/download/v${TG_VERSION}/terragrunt_linux_amd64"
 
-      #     curl -sL "${TOFU_DOWNLOAD_URL}" -o "${TEMP_DIR}/tofu.tar.gz"
-      #     curl -sL "${TG_DOWNLOAD_URL}" -o "${TEMP_DIR}/terragrunt" 
+          curl -sL "${TOFU_DOWNLOAD_URL}" -o "${TEMP_DIR}/tofu.tar.gz"
+          curl -sL "${TG_DOWNLOAD_URL}" -o "${TEMP_DIR}/terragrunt" 
           
-      #     tar -zxf "${TEMP_DIR}/tofu.tar.gz" -C "${TEMP_DIR}"
+          tar -zxf "${TEMP_DIR}/tofu.tar.gz" -C "${TEMP_DIR}"
 
-      #     chmod +x "${TEMP_DIR}/tofu" "${TEMP_DIR}/terragrunt"
-      #     sudo mv "${TEMP_DIR}/tofu" "${TEMP_DIR}/terragrunt" /usr/local/bin
+          chmod +x "${TEMP_DIR}/tofu" "${TEMP_DIR}/terragrunt"
+          sudo mv "${TEMP_DIR}/tofu" "${TEMP_DIR}/terragrunt" /usr/local/bin
 
-      #     rm -rf "${TEMP_DIR}"
+          rm -rf "${TEMP_DIR}"
 
-      #     terragrunt --version
-      #     tofu --version
-      #   env:
-      #     TOFU_VERSION: ${{ steps.get_tf_tg_version.outputs.tofu_version }}
-      #     TG_VERSION: ${{ steps.get_tf_tg_version.outputs.terragrunt_version }}
+          terragrunt --version
+          tofu --version
+        env:
+          TOFU_VERSION: ${{ steps.get_tf_tg_version.outputs.tofu_version }}
+          TG_VERSION: ${{ steps.get_tf_tg_version.outputs.terragrunt_version }}
 
-      # - name: Install service-discovery tool
-      #   run: |
-      #     pushd service-registration > /dev/null
-      #     cp service-discovery.py /usr/local/bin/service-discovery
-      #     cp mappings.json /usr/local/bin/
-      #     popd > /dev/null
-      #     service-discovery -h
+      - name: Install service-discovery tool
+        run: |
+          pushd service-registration > /dev/null
+          cp service-discovery.py /usr/local/bin/service-discovery
+          cp mappings.json /usr/local/bin/
+          popd > /dev/null
+          service-discovery -h
 
-      # - name: Init against dev
-      #   run: |
-      #     cd envs/dev
-      #     terragrunt run-all init
-      #   env:
-      #     GH_TOKEN: ${{ steps.gh-app-auth.outputs.token }}
-      #     TF_VAR_cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      - name: Terragrunt init
+        run: |
+          cd envs/${{ matrix.env }}
+          terragrunt run-all init
+        env:
+          GH_TOKEN: ${{ steps.gh-app-auth.outputs.token }}
+          TF_VAR_cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
 
-      # - name: Plan against dev
-      #   run: |
-      #     cd envs/dev
-      #     terragrunt run-all plan
-      #   env:
-      #     GH_TOKEN: ${{ steps.gh-app-auth.outputs.token }}
-      #     TF_VAR_cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      - name: Terragrunt plan
+        run: |
+          cd envs/${{ matrix.env }}
+          terragrunt run-all plan
+        env:
+          GH_TOKEN: ${{ steps.gh-app-auth.outputs.token }}
+          TF_VAR_cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
 
-      # - name: Apply against dev
-      #   run: |
-      #     cd envs/dev
-      #     terragrunt run-all apply
-      #   # Apply only when merging to main branch
-      #   if: github.event_name != 'pull_request'
-      #   env:
-      #     TERRAGRUNT_NON_INTERACTIVE: "true"
-      #     GH_TOKEN: ${{ steps.gh-app-auth.outputs.token }}
-      #     TF_VAR_cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      - name: Terragrunt apply
+        run: |
+          cd envs/${{ matrix.env }}
+          terragrunt run-all apply
+        # Apply only when merging to main branch
+        if: github.event_name != 'pull_request'
+        env:
+          TERRAGRUNT_NON_INTERACTIVE: "true"
+          GH_TOKEN: ${{ steps.gh-app-auth.outputs.token }}
+          TF_VAR_cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
