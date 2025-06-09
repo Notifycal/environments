@@ -69,7 +69,7 @@ jobs:
       matrix:
         env: ${{ fromJson(needs.filter-envs.outputs.envs) }}
     runs-on: ubuntu-latest
-    name: Deploy to ${{ matrix.env || github.event.inputs.target_env || 'all environments' }}
+    name: 'CI/CD: ${{ matrix.env }}'
     permissions:
       contents: read
       id-token: write
