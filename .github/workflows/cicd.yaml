@@ -14,8 +14,6 @@ on:
     branches:
       - main
 
-
-
 env:
   AWS_REGION: eu-west-1
 
@@ -41,25 +39,28 @@ jobs:
       - id: set-matrix
         run: |
           echo "Check if we have a target environment set for manual deployment"
-          if [[ "${{ github.event.inputs.target_env }}" != "" ]]; then
-            echo "envs=[\"${{ github.event.inputs.target_env }}\"]" >> "${GITHUB_OUTPUT}"
+          if [[ "${TARGET_ENV}" != "" ]]; then
+            echo "envs=[\"${TARGET_ENV}\"]" >> "${GITHUB_OUTPUT}"
             exit 0
           fi
 
-          echo "Check if we have global changes that affect all environments"
-          if [[ "${{ steps.filter.outputs.global }}" == "true" ]]; then
-            echo -e "\tGlobal change detected -> run against all environments"
+          # echo "Check if we have global changes that affect all environments"
+          # if [[ "${{ steps.filter.outputs.global }}" == "true" ]]; then
+          #   echo -e "\tGlobal change detected -> run against all environments"
             
-            # Get env names from filters file, ignoring the "non-global" key
-            FILTERS_FILE=".github/filters.yaml"
-            ENV_KEYS=$(yq -o=json -I0 'keys | map(select(. != "global"))' "${FILTERS_FILE}")
+          #   # Get env names from filters file, ignoring the "non-global" key
+          #   FILTERS_FILE=".github/filters.yaml"
+          #   ENV_KEYS=$(yq -o=json -I0 'keys | map(select(. != "global"))' "${FILTERS_FILE}")
 
-            echo "envs=${ENV_KEYS}" >> "${GITHUB_OUTPUT}"
-            exit 0
-          fi
+          #   echo "envs=${ENV_KEYS}" >> "${GITHUB_OUTPUT}"
+          #   exit 0
+          # fi
 
-          echo "No global changes detected, using filtered environments"
-          echo "envs=${{ steps.filter.outputs.changes }}" >> "${GITHUB_OUTPUT}"
+          echo "Using filtered environments"
+          echo "envs=${CHANGES}" >> "${GITHUB_OUTPUT}"
+        env:
+          TARGET_ENV: ${{ github.event.inputs.target_env }}
+          CHANGES: ${{ steps.filter.outputs.changes }}
 
       
   deploy:
