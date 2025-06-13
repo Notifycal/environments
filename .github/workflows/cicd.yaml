@@ -2,6 +2,11 @@ name: CI/CD
 
 on:
   workflow_dispatch:
+    inputs:
+      target_env:
+        description: 'Name of the environment to deploy manually.'
+        required: false
+        type: string
   push:
     branches:
       - main
@@ -9,22 +14,63 @@ on:
     branches:
       - main
 
-concurrency:
-  # github.head_ref is only set when the workflow was triggered by a pull_request and it
-  # contains the value of the source branch of the PR.
-  group: ${{ github.workflow }}-${{ github.head_ref || github.ref_name }}
-  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
-
 env:
   AWS_REGION: eu-west-1
 
 jobs:
-  dev:
+  filter-envs:
     runs-on: ubuntu-latest
+    outputs:
+      envs: ${{ steps.set-matrix.outputs.envs }}
+    permissions:
+      contents: read
+      pull-requests: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref || github.ref_name }}
+
+      - name: Detect changed envs
+        id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: .github/filters.yaml
+
+      - id: set-matrix
+        run: |
+          echo "Check if we have a target environment set for manual deployment"
+          if [[ "${TARGET_ENV}" != "" ]]; then
+            echo "envs=[\"${TARGET_ENV}\"]" >> "${GITHUB_OUTPUT}"
+            exit 0
+          fi
+
+          echo "Using filtered environments"
+          echo "envs=${CHANGES}" >> "${GITHUB_OUTPUT}"
+        env:
+          TARGET_ENV: ${{ github.event.inputs.target_env }}
+          CHANGES: ${{ steps.filter.outputs.changes }}
+
+      
+  deploy:
+    needs: filter-envs
+    if: ${{ needs.filter-envs.outputs.envs != '[]' }}
+    strategy:
+      matrix:
+        env: ${{ fromJson(needs.filter-envs.outputs.envs) }}
+    runs-on: ubuntu-latest
+    name: 'CI/CD: ${{ matrix.env }}'
     permissions:
       contents: read
       id-token: write
+
+    concurrency:
+      # github.head_ref is only set when the workflow was triggered by a pull_request and it
+      # contains the value of the source branch of the PR.
+      group: ${{ github.workflow }}-${{ matrix.env || github.event.inputs.target_env || 'global' }}
+      cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
     steps:
+      - run: echo "Deploying against ${{ matrix.env }} environment"
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.head_ref || github.ref_name }}
@@ -89,25 +135,6 @@ jobs:
           TOFU_VERSION: ${{ steps.get_tf_tg_version.outputs.tofu_version }}
           TG_VERSION: ${{ steps.get_tf_tg_version.outputs.terragrunt_version }}
 
-      # - name: Cached .terragrunt-cache?
-      #   id: terragrunt-cache
-      #   uses: actions/cache@v4
-      #   with:
-      #     path: |
-      #       **/.terragrunt-cache
-      #     # Example key strategy including OS and files that contain versions
-      #     key: ${{ runner.os }}-terragrunt-cache-${{ hashFiles(
-      #       'envs/*/.terraform.lock.hcl',
-      #       'envs/*/env.json',
-      #       'stacks/*/source.json',
-      #       '.opentofu-version',
-      #       '.terragrunt-version'
-      #       ) }}
-
-      # - name: 'Debug: Cache hit for terragrunt-cache?'
-      #   if: steps.terragrunt-cache.outputs.cache-hit == 'true'
-      #   run: echo "Cache hit!!"
-
       - name: Install service-discovery tool
         run: |
           pushd service-registration > /dev/null
@@ -116,25 +143,25 @@ jobs:
           popd > /dev/null
           service-discovery -h
 
-      - name: Init against dev
+      - name: Terragrunt init
         run: |
-          cd envs/dev
+          cd envs/${{ matrix.env }}
           terragrunt run-all init
         env:
           GH_TOKEN: ${{ steps.gh-app-auth.outputs.token }}
           TF_VAR_cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
 
-      - name: Plan against dev
+      - name: Terragrunt plan
         run: |
-          cd envs/dev
+          cd envs/${{ matrix.env }}
           terragrunt run-all plan
         env:
           GH_TOKEN: ${{ steps.gh-app-auth.outputs.token }}
           TF_VAR_cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
 
-      - name: Apply against dev
+      - name: Terragrunt apply
         run: |
-          cd envs/dev
+          cd envs/${{ matrix.env }}
           terragrunt run-all apply
         # Apply only when merging to main branch
         if: github.event_name != 'pull_request'

@@ -45,7 +45,7 @@ locals {
   stack_config             = jsondecode(file("${local.stack_path}/source.json"))
   stack_providers_filename = "_tg.provider.versions.tf"
 
-  pre_plan_apply_hook_command = <<EOF
+  pre_plan_apply_destroy_hook_command = <<EOF
   if [[ "$${LOCAL_DEV}" == "true" ]]; then
     hook_script=ci/pre-plan-apply.local.sh
   else
@@ -106,9 +106,9 @@ terraform {
     working_dir = "${get_working_dir()}/.."
   }
 
-  before_hook "pre_plan_apply_stack" {
-    commands    = ["plan", "apply"]
-    execute     = [get_env("SHELL", "/bin/bash"), "-ce", local.pre_plan_apply_hook_command]
+  before_hook "pre_plan_apply_destroy_stack" {
+    commands    = ["plan", "apply", "destroy"]
+    execute     = [get_env("SHELL", "/bin/bash"), "-ce", local.pre_plan_apply_destroy_hook_command]
     working_dir = "${get_working_dir()}/.."
   }
 
