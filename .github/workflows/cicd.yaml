@@ -148,6 +148,7 @@ jobs:
           cd envs/${{ matrix.env }}
           terragrunt run-all init
         env:
+          TERRAGRUNT_NON_INTERACTIVE: "true"
           GH_TOKEN: ${{ steps.gh-app-auth.outputs.token }}
           TF_VAR_cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
 
