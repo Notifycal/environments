@@ -8,7 +8,7 @@ on:
         required: false
         type: string
   schedule:
-    - cron: '40 17 * * *' # Every day at 6:00 UTC
+    - cron: '00 18 * * *' # Every day at 6:00 UTC
 
 env:
   AWS_REGION: eu-west-1
@@ -29,13 +29,13 @@ jobs:
       - name: Detect/verify environments to destroy (dev-*)
         id: set-matrix
         run: |
-          if [[ "${TARGET_ENV}" != dev-* ]]; then
-            echo "Invalid environment. This only supports destroying \`dev-*\` environments." >> "${GITHUB_STEP_SUMMARY}"
-            exit 1
-          fi
-
           echo "Check if we have a target environment set for destroy"
           if [[ "${TARGET_ENV}" != "" ]]; then
+            if [[ "${TARGET_ENV}" != dev-* ]]; then
+              echo "Invalid environment. This only supports destroying \`dev-*\` environments." >> "${GITHUB_STEP_SUMMARY}"
+              exit 1
+            fi
+
             echo "envs=[\"${TARGET_ENV}\"]" >> "${GITHUB_OUTPUT}"
             exit 0
           fi
