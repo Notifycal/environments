@@ -26,9 +26,14 @@ jobs:
         with:
           ref: ${{ github.head_ref || github.ref_name }}
             
-      - name: Detect environments to destroy (dev-*)
+      - name: Detect/verify environments to destroy (dev-*)
         id: set-matrix
         run: |
+          if [[ "${TARGET_ENV}" != dev-* ]]; then
+            echo "Invalid environment. This only supports destroying dev-* environments." >> "${GITHUB_STEP_SUMMARY}"
+            exit 1
+          fi
+
           echo "Check if we have a target environment set for destroy"
           if [[ "${TARGET_ENV}" != "" ]]; then
             echo "envs=[\"${TARGET_ENV}\"]" >> "${GITHUB_OUTPUT}"
