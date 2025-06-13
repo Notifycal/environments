@@ -30,7 +30,7 @@ jobs:
         id: set-matrix
         run: |
           if [[ "${TARGET_ENV}" != dev-* ]]; then
-            echo "Invalid environment. This only supports destroying `dev-*` environments." >> "${GITHUB_STEP_SUMMARY}"
+            echo "Invalid environment. This only supports destroying \`dev-*\` environments." >> "${GITHUB_STEP_SUMMARY}"
             exit 1
           fi
 
