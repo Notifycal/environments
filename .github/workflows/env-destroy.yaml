@@ -1,18 +1,14 @@
-name: CI/CD
+name: Destroy environment
 
 on:
   workflow_dispatch:
     inputs:
       target_env:
-        description: 'Name of the environment to deploy manually.'
+        description: 'Name of the environment to destroy.'
         required: false
         type: string
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+  schedule:
+    - cron: '0 6 * * *' # Every day at 6:00 UTC
 
 env:
   AWS_REGION: eu-west-1
@@ -29,36 +25,33 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.head_ref || github.ref_name }}
-
-      - name: Detect changed envs
-        id: filter
-        uses: dorny/paths-filter@v3
-        with:
-          filters: .github/filters.yaml
-
-      - id: set-matrix
+            
+      - name: Detect environments to destroy (dev-*)
+        id: set-matrix
         run: |
-          echo "Check if we have a target environment set for manual deployment"
+          echo "Check if we have a target environment set for destroy"
           if [[ "${TARGET_ENV}" != "" ]]; then
             echo "envs=[\"${TARGET_ENV}\"]" >> "${GITHUB_OUTPUT}"
             exit 0
           fi
 
-          echo "Using filtered environments"
-          echo "envs=${CHANGES}" >> "${GITHUB_OUTPUT}"
+          echo "Destroying all dev-* environments"
+          ENV_KEYS=$(yq -o=json -I0 'keys | map(select(. == "dev-*"))' "${FILTERS_FILE}")
+          echo "envs=${ENV_KEYS}" >> "${GITHUB_OUTPUT}"
+
+          exit 0
         env:
           TARGET_ENV: ${{ github.event.inputs.target_env }}
-          CHANGES: ${{ steps.filter.outputs.changes }}
-
+          FILTERS_FILE: .github/filters.yaml
       
-  deploy:
+  destroy:
     needs: filter-envs
     if: ${{ needs.filter-envs.outputs.envs != '[]' }}
     strategy:
       matrix:
         env: ${{ fromJson(needs.filter-envs.outputs.envs) }}
     runs-on: ubuntu-latest
-    name: 'CI/CD: ${{ matrix.env }}'
+    name: 'Destroy: ${{ matrix.env }}'
     permissions:
       contents: read
       id-token: write
@@ -70,7 +63,7 @@ jobs:
       cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
     steps:
-      - run: echo "Deploying against ${{ matrix.env }} environment"
+      - run: echo "Destroying ${{ matrix.env }} environment"
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.head_ref || github.ref_name }}
@@ -135,14 +128,6 @@ jobs:
           TOFU_VERSION: ${{ steps.get_tf_tg_version.outputs.tofu_version }}
           TG_VERSION: ${{ steps.get_tf_tg_version.outputs.terragrunt_version }}
 
-      - name: Install service-discovery tool
-        run: |
-          pushd service-registration > /dev/null
-          cp service-discovery.py /usr/local/bin/service-discovery
-          cp mappings.json /usr/local/bin/
-          popd > /dev/null
-          service-discovery -h
-
       - name: Terragrunt init
         run: |
           cd envs/${{ matrix.env }}
@@ -151,20 +136,10 @@ jobs:
           GH_TOKEN: ${{ steps.gh-app-auth.outputs.token }}
           TF_VAR_cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
 
-      - name: Terragrunt plan
+      - name: Terragrunt destroy
         run: |
           cd envs/${{ matrix.env }}
-          terragrunt run-all plan
-        env:
-          GH_TOKEN: ${{ steps.gh-app-auth.outputs.token }}
-          TF_VAR_cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-
-      - name: Terragrunt apply
-        run: |
-          cd envs/${{ matrix.env }}
-          terragrunt run-all apply
-        # Apply only when merging to main branch
-        if: github.event_name != 'pull_request'
+          terragrunt run-all destroy
         env:
           TERRAGRUNT_NON_INTERACTIVE: "true"
           GH_TOKEN: ${{ steps.gh-app-auth.outputs.token }}
