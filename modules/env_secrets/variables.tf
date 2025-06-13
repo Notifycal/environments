@@ -1,5 +1,36 @@
 variable "environment" {}
 
+variable "jwt_config" {
+  type = object({
+    access = object({
+      algorithm  = optional(string, "ES256")
+      audience   = optional(string, "notifycal.com")
+      expiration = optional(string, "5m")
+      issuer     = optional(string, "notifycal.com")
+    })
+    refresh = object({
+      algorithm  = optional(string, "ES256")
+      audience   = optional(string, "notifycal.com")
+      expiration = optional(string, "7d")
+      issuer     = optional(string, "notifycal.com")
+    })
+  })
+  default = {
+    access  = {}
+    refresh = {}
+  }
+
+  validation {
+    condition = (
+      substr(var.jwt_config.access.algorithm, 0, 2) == "ES" &&
+      substr(var.jwt_config.refresh.algorithm, 0, 2) == "ES" &&
+      contains(["224", "256", "384", "521"], substr(var.jwt_config.access.algorithm, 2, -1)) &&
+      contains(["224", "256", "384", "521"], substr(var.jwt_config.refresh.algorithm, 2, -1))
+    )
+    error_message = "The algorithm for both access and refresh tokens must be: ES224, ES256, ES384 or ES521"
+  }
+}
+
 variable "google_oauth_client_id" {
   type = string
 }
