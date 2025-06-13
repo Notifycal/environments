@@ -1,5 +1,5 @@
 locals {
-  secrets_file_path = "${get_terragrunt_dir()}/secret.auto.tfvars"
+  secrets_file_path   = "${get_terragrunt_dir()}/secret.auto.tfvars"
   secrets_file_exists = run_cmd("bash", "-c", "test -f \"${local.secrets_file_path}\" && echo exists || true") == "exists"
 }
 

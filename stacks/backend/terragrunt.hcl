@@ -80,7 +80,7 @@ inputs = {
   )
 
   jwt_config = dependency.env_secrets.outputs.jwt_config
-  jwt_keys = dependency.env_secrets.outputs.jwt_keys
+  jwt_keys   = dependency.env_secrets.outputs.jwt_keys
 
   google_oauth_config = {
     client_id     = dependency.env_secrets.outputs.google_oauth_client_id

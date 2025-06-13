@@ -6,6 +6,7 @@ include "stack" {
 }
 
 inputs = {
+  force_destroy_bucket = true
   # doesn't work for non-prod
   enable_www_redirect = false
   cloudflare_config = {
