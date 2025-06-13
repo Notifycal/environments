@@ -12,7 +12,7 @@ locals {
 inputs = {
   observability = {
     alert_notifier = {
-      slack_channel = "#dev-dan-alerting"
+      slack_channel = "#dev-sj11-alerting"
     }
     alert_config = {
       treat_missing_data       = "ignore"
@@ -29,7 +29,7 @@ inputs = {
   emailing_config = {
     enabled = true
     sender = {
-      displayName = "Notifycal Dev Dan"
+      displayName = "Notifycal Dev SJ11"
       email       = "info@${local.mailgun_domain}"
     }
   }
