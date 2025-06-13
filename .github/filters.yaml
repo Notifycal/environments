@@ -1,13 +1,3 @@
 dev: 'envs/dev/**'
 dev-dan: 'envs/dev-dan/**'
-# dev-sj11: 'envs/dev-sj11/**'
-# global:
-#   # Should modules be here?
-#   - modules/**
-#   - providers/**
-#   - service-registration/**
-#   - stacks/**
-#   - .opentofu-version
-#   - .terragrunt-version
-#   - '.github/workflows/cicd.yaml'
-  
+dev-sj11: 'envs/dev-sj11/**'
