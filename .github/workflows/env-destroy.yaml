@@ -8,7 +8,7 @@ on:
         required: false
         type: string
   schedule:
-    - cron: '0 6 * * *' # Every day at 6:00 UTC
+    - cron: '25 16 * * *' # Every day at 6:00 UTC
 
 env:
   AWS_REGION: eu-west-1
@@ -30,7 +30,7 @@ jobs:
         id: set-matrix
         run: |
           if [[ "${TARGET_ENV}" != dev-* ]]; then
-            echo "Invalid environment. This only supports destroying dev-* environments." >> "${GITHUB_STEP_SUMMARY}"
+            echo "Invalid environment. This only supports destroying `dev-*` environments." >> "${GITHUB_STEP_SUMMARY}"
             exit 1
           fi
 
