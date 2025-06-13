@@ -8,7 +8,7 @@ on:
         required: false
         type: string
   schedule:
-    - cron: '00 18 * * *' # Every day at 6:00 UTC
+    - cron: '0 4 * * *' # Every day at 4:00 UTC
 
 env:
   AWS_REGION: eu-west-1
