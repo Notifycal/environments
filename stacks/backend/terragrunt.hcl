@@ -24,6 +24,21 @@ dependency "env_secrets" {
     vonage_auth_private_key                    = "vonage_auth_private_key"
     vonage_auth_private_key_ssm_parameter_name = "vonage_auth_private_key_ssm_parameter_name"
     vonage_webhook_jwt_signing_secret          = "vonage_webhook_jwt_signing_secret"
+
+    jwt_config = {
+      access = {
+        algorithm = "ES256"
+        issuer    = "notifycal.com"
+        expiration = "1h"
+        audience    = "notifycal.com"
+      }
+      refresh = {
+        algorithm = "ES256"
+        issuer    = "notifycal.com"
+        expiration = "7d"
+        audience    = "notifycal.com"
+      }
+    }
   }
 
   mock_outputs_allowed_terraform_commands = ["init", "validate"]
