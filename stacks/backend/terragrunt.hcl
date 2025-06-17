@@ -27,16 +27,16 @@ dependency "env_secrets" {
 
     jwt_config = {
       access = {
-        algorithm = "ES256"
-        issuer    = "notifycal.com"
+        algorithm  = "ES256"
+        issuer     = "notifycal.com"
         expiration = "1h"
-        audience    = "notifycal.com"
+        audience   = "notifycal.com"
       }
       refresh = {
-        algorithm = "ES256"
-        issuer    = "notifycal.com"
+        algorithm  = "ES256"
+        issuer     = "notifycal.com"
         expiration = "7d"
-        audience    = "notifycal.com"
+        audience   = "notifycal.com"
       }
     }
   }
@@ -100,7 +100,10 @@ inputs = {
   google_oauth_config = {
     client_id     = dependency.env_secrets.outputs.google_oauth_client_id
     client_secret = dependency.env_secrets.outputs.google_oauth_client_secret
-    redirect_url  = dependency.env_secrets.outputs.google_oauth_redirect_url
+    redirect_url_list = compact([
+      dependency.env_secrets.outputs.google_oauth_redirect_url,
+      startswith(local.environment, "dev") ? "http://localhost:5173" : null
+    ])
   }
 
   vonage_auth_config = {
