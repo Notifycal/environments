@@ -1,3 +1,11 @@
-dev: 'envs/dev/**'
+dev: 
+  - envs/dev/**
+  - modules/**
+  - providers/**
+  - service-registration/**
+  - stacks/**
+  - .opentofu-version
+  - .terragrunt-version
+  - .github/workflows/cicd.yaml
 dev-dan: 'envs/dev-dan/**'
 dev-sj11: 'envs/dev-sj11/**'
