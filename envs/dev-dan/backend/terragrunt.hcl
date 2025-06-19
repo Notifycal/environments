@@ -10,15 +10,7 @@ locals {
 }
 
 inputs = {
-  observability = {
-    alert_notifier = {
-      slack_channel = "#dev-dan-alerting"
-    }
-    alert_config = {
-      treat_missing_data       = "ignore"
-      notify_insufficient_data = false
-    }
-  }
+  observability = null
   messaging_config = {
     enabled = false
   }
