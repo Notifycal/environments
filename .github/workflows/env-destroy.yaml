@@ -55,6 +55,7 @@ jobs:
     strategy:
       matrix:
         env: ${{ fromJson(needs.filter-envs.outputs.envs) }}
+    continue-on-error: true   # this will ensure the workflow continues even if one of the destroy jobs fails
     runs-on: ubuntu-latest
     name: 'Destroy: ${{ matrix.env }}'
     permissions:
