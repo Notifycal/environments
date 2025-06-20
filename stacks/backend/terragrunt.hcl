@@ -88,11 +88,13 @@ inputs = {
   domain_prefix = local.environment == "prod" ? "api" : "api${local.environment}"
 
   # For CORS
-  frontend_domain = format(
-    "https://%s.%s",
-    local.environment == "prod" ? "private" : "private${local.environment}",
-    local.base_domain
-  )
+  allowed_domains = compact([
+    format("https://%s.%s",
+      local.environment == "prod" ? "private" : "private${local.environment}",
+      local.base_domain
+    ),
+    startswith(local.environment, "dev") ? "http://localhost:5173" : null
+  ])
 
   jwt_config = dependency.env_secrets.outputs.jwt_config
   jwt_keys   = dependency.env_secrets.outputs.jwt_keys
