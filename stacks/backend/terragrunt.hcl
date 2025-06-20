@@ -88,7 +88,7 @@ inputs = {
   domain_prefix = local.environment == "prod" ? "api" : "api${local.environment}"
 
   # For CORS
-  allowed_domains = compact([
+  allowed_origins = compact([
     format("https://%s.%s",
       local.environment == "prod" ? "private" : "private${local.environment}",
       local.base_domain

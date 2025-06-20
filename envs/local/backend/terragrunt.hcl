@@ -10,7 +10,7 @@ locals {
 }
 
 inputs = {
-  frontend_domain                   = "http://localhost:5173"
+  allowed_origins                   = ["http://localhost:5173"]
   api_gateway_custom_domain_enabled = false
   observability                     = null
   enable_xray_active_tracing        = false
