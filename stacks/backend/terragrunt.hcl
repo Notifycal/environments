@@ -73,6 +73,9 @@ dependency "payment_plans" {
       percentage = 21
       inclusive  = true
     }
+    country_to_sms_cost_map = {
+      ES = 1.3
+    }
   }
 
   mock_outputs_allowed_terraform_commands = ["init", "validate"]
@@ -119,7 +122,9 @@ inputs = {
     api_key = dependency.env_secrets.outputs.mailgun_api_key
   }
 
-  subscription_tiers       = dependency.payment_plans.outputs.subscription_tiers
+  subscription_tiers      = dependency.payment_plans.outputs.subscription_tiers
+  country_to_sms_cost_map = dependency.payment_plans.outputs.country_to_sms_cost_map
+
   stripe_operating_api_key = dependency.env_secrets.outputs.stripe_operating_api_key
   stripe_admin_api_key     = dependency.env_secrets.outputs.stripe_admin_api_key
 }
