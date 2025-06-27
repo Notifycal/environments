@@ -122,9 +122,10 @@ inputs = {
     api_key = dependency.env_secrets.outputs.mailgun_api_key
   }
 
-  subscription_tiers      = dependency.payment_plans.outputs.subscription_tiers
-  tax_id                  = dependency.payment_plans.outputs.spain_tax_config.id
-  country_to_sms_cost_map = dependency.payment_plans.outputs.country_to_sms_cost_map
+  subscription_tiers               = dependency.payment_plans.outputs.subscription_tiers
+  tax_id                           = dependency.payment_plans.outputs.spain_tax_config.id
+  customer_portal_configuration_id = dependency.payment_plans.outputs.customer_portal_configuration_id
+  country_to_sms_cost_map          = dependency.payment_plans.outputs.country_to_sms_cost_map
 
   stripe_operating_api_key = dependency.env_secrets.outputs.stripe_operating_api_key
   stripe_admin_api_key     = dependency.env_secrets.outputs.stripe_admin_api_key
