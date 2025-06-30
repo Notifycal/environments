@@ -70,9 +70,6 @@ jobs:
 
     steps:
       - run: echo "Destroying ${{ matrix.env }} environment"
-      - name: Simulate failure in a single job
-        run: |
-          [ "${{ matrix.env }}" = "dev" ] && exit 1 || exit 0
       - uses: actions/checkout@v4
         id: checkout
         with:
