@@ -10,6 +10,7 @@ locals {
 }
 
 inputs = {
+  api_gateway_custom_domain_enabled = false
   observability = null
   messaging_config = {
     enabled = false

@@ -10,6 +10,7 @@ locals {
 }
 
 inputs = {
+  api_gateway_custom_domain_enabled = false
   observability = {
     alert_notifier = {
       slack_channel = "#dev-alerting"
