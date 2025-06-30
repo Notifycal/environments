@@ -14,6 +14,12 @@ on:
     branches:
       - main
 
+concurrency:
+  # github.head_ref is only set when the workflow was triggered by a pull_request and it
+  # contains the value of the source branch of the PR.
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 env:
   AWS_REGION: eu-west-1
 
