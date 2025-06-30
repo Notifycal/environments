@@ -185,7 +185,8 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           pattern: result-*
-          path: result
+          path: results
+      - run: ls -la results 
       - name: Set workflow outcome
         run: |
           if grep -xq 'failure' results/*/status.txt; then
