@@ -71,6 +71,7 @@ jobs:
     steps:
       - run: echo "Destroying ${{ matrix.env }} environment"
       - uses: actions/checkout@v4
+        id: checkout
         with:
           ref: ${{ github.head_ref || github.ref_name }}
 
@@ -82,15 +83,18 @@ jobs:
           private_key: ${{ secrets.NOTIFYCAL_CICD_APP_SECRET }}
 
       - name: Hack for github internal repo access :(
+        id: gh_internal_repo_access
         run: git config --global url."https://foo:${{ steps.gh-app-auth.outputs.token }}@github.com".insteadOf ssh://git@github.com
 
       - name: Configure AWS Credentials
+        id: config_aws_credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-region: ${{ env.AWS_REGION }}
           role-to-assume: ${{ secrets.AWS_IAM_ROLE_CI }}
           role-session-name: run-${{ github.run_id }}
       - run: aws sts get-caller-identity
+        id: aws_sts_get_caller_identity
 
       - name: Get TF/TG version from version files
         id: get_tf_tg_version
@@ -111,6 +115,7 @@ jobs:
           TG_VERSION: ${{ steps.get_tf_tg_version.outputs.terragrunt_version }}
 
       - name: Install OpenTofu and Terragrunt
+        id: tf_tg_install
         # Only if there is no cache
         if: steps.tbinaries-cache.outputs.cache-hit != 'true'
         run: |
@@ -135,6 +140,7 @@ jobs:
           TG_VERSION: ${{ steps.get_tf_tg_version.outputs.terragrunt_version }}
 
       - name: Terragrunt init
+        id: tg_init
         run: |
           cd envs/${{ matrix.env }}
           terragrunt run-all init
@@ -143,6 +149,7 @@ jobs:
           TF_VAR_cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
 
       - name: Terragrunt destroy
+        id: tg_destroy
         run: |
           cd envs/${{ matrix.env }}
           terragrunt run-all destroy
@@ -150,3 +157,41 @@ jobs:
           TERRAGRUNT_NON_INTERACTIVE: "true"
           GH_TOKEN: ${{ steps.gh-app-auth.outputs.token }}
           TF_VAR_cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      
+      - name: Write job status to file
+        if: always()
+        id: write_job_status
+        run: |
+          if [[ ${{ contains(steps.*.outcome, 'failure') }} == "true" ]]; then
+            echo "failure" > status.txt
+          else
+            echo "success" > status.txt
+          fi
+      
+      - name: Upload status artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: result-${{ matrix.env }}   # this is the artifact name
+          path: status.txt
+  
+  postflight:
+    runs-on: ubuntu-latest
+    needs: destroy
+    if: always()
+    steps:
+      - name: Download job status artifact
+        uses: actions/download-artifact@v4
+        with:
+          pattern: result-*
+          path: results
+      - run: ls -la results 
+      - name: Set workflow outcome
+        run: |
+          if grep -xq 'failure' results/*/status.txt; then
+            echo "At least one job failed. Failing workflow"
+            exit 1
+          else
+            echo "All jobs passed"
+          fi
+          
