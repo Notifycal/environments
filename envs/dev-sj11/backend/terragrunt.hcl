@@ -10,6 +10,8 @@ locals {
 }
 
 inputs = {
+  disable_execute_api_endpoint = false
+  api_gateway_custom_domain_ttl = 60
   observability = null
   messaging_config = {
     enabled = false
