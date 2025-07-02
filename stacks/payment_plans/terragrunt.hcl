@@ -14,19 +14,33 @@ inputs = {
   subscription_tiers = {
     good = {
       name        = "Good Plan"
-      description = "Basic plan"
+      description = "100 monthly credits"
       price_cents = 1000 # €10.00
+      credits     = 100
     }
     better = {
       name        = "Better Plan"
-      description = "Better plan"
+      description = "350 monthly credits"
       price_cents = 2500 # €25.00
+      credits     = 350
     }
     best = {
       name        = "Best Plan"
-      description = "Best plan"
+      description = "1000 monthly credits"
       price_cents = 6000 # €60.00
+      credits     = 1000
     }
+  }
+  topups = {
+    single = {
+      name        = "Single Topup"
+      description = "90 credits"
+      price_cents = 1200 # €12.00
+      credits     = 90
+    }
+  }
+  country_to_sms_cost_map = {
+    ES = 1.3
   }
   currency             = "eur"
   spain_vat_percentage = 21.0

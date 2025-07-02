@@ -122,7 +122,7 @@ inputs = {
     api_key = dependency.env_secrets.outputs.mailgun_api_key
   }
 
-  subscription_tiers               = dependency.payment_plans.outputs.subscription_tiers
+  payment_plans                    = dependency.payment_plans.outputs.payment_plans
   tax_id                           = dependency.payment_plans.outputs.spain_tax_config.id
   customer_portal_configuration_id = dependency.payment_plans.outputs.customer_portal_configuration_id
   country_to_sms_cost_map          = dependency.payment_plans.outputs.country_to_sms_cost_map
