@@ -48,28 +48,46 @@ dependency "payment_plans" {
   config_path = "${get_terragrunt_dir()}/../payment_plans"
 
   mock_outputs = {
-    subscription_tiers = {
-      good = {
-        product_id = "good"
-        price_id   = "good"
-        name       = "good subscription tier"
-        price_eur  = 1000 # in cents
+    payment_plans = {
+      tiers = {
+        best = {
+          credits             = 1000
+          name                = "Best Plan"
+          number_of_reminders = 46
+          price_eur           = 60
+          price_id            = "best_price_id_mock"
+          product_id          = "best_product_id_mock"
+        }
+        better = {
+          credits             = 350
+          name                = "Better Plan"
+          number_of_reminders = 19
+          price_eur           = 25
+          price_id            = "better_price_id_mock"
+          product_id          = "better_product_id_mock"
+        }
+        good = {
+          credits             = 100
+          name                = "Good Plan"
+          number_of_reminders = 7
+          price_eur           = 10
+          price_id            = "good_price_id_mock"
+          product_id          = "good_product_id_mock"
+        }
       }
-      better = {
-        product_id = "better"
-        price_id   = "better"
-        name       = "better subscription tier"
-        price_eur  = 2000 # in cents
-      }
-      best = {
-        product_id = "best"
-        price_id   = "best"
-        name       = "best subscription tier"
-        price_eur  = 5000 # in cents
+      topups = {
+        single = {
+          credits             = 90
+          name                = "Single Topup"
+          number_of_reminders = 9
+          price_eur           = 12
+          price_id            = "topup_single_price_id_mock"
+          product_id          = "topup_single_product_id_mock"
+        }
       }
     }
-    spain_tax_rate = {
-      id         = "spain"
+    spain_tax_config = {
+      id         = "spain_tax_id_mock"
       percentage = 21
       inclusive  = true
     }
