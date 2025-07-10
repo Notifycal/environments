@@ -147,7 +147,7 @@ terraform {
     } : {}
   }
 
-  source = "${local.stack_config.base_source_url}?ref=${local.resolved_stack_version}"
+  source = local.resolved_stack_version == "" ? local.stack_config.base_source_url : "${local.stack_config.base_source_url}?ref=${local.resolved_stack_version}"
 }
 
 remote_state = local.remote_state
