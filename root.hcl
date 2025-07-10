@@ -90,6 +90,33 @@ locals {
       echo "Skipping 'install_tofu_version' hook because CI == true." 1>&2
     fi
   EOF
+
+  # <org>/<repo_name> or null
+  git_source_repository = (
+    try(one(regex(
+      # This regex covers the following formats of module URLs. Only for github.
+      # - git@github.com:org/repo.git
+      # - ssh://git@github.com/org/repo.git
+      # - https://github.com/org/repo.git
+      "^(?:git::)?(?:ssh://git@github\\.com/|git@github\\.com:|https://github\\.com/)([^/]+/[^/.]+)",
+      local.stack_config.base_source_url
+    )), null)
+  )
+
+  # Doing this because Terragrunt doesn't do short-circuit for conditional run_cmd :(
+  # https://github.com/gruntwork-io/terragrunt/issues/1448
+  # https://github.com/gruntwork-io/terragrunt/issues/2361
+  # https://github.com/gruntwork-io/terragrunt/issues/1427
+  get_latest_release_command = (local.git_source_repository != null ?
+    "gh release list --repo ${local.git_source_repository} --json name,isLatest --jq '.[] | select(.isLatest)|.name'" :
+    "echo"
+  )
+
+  # run_cmd will always run, regardless of condition. Uses the stack_version from env.json if isn't "main" or ""
+  resolved_stack_version = (contains(["", "main"], local.stack_version) ?
+    trimspace(run_cmd("--terragrunt-quiet", "bash", "-c", local.get_latest_release_command)) :
+    local.stack_version
+  )
 }
 
 terraform {
@@ -120,7 +147,7 @@ terraform {
     } : {}
   }
 
-  source = local.stack_version == "" ? local.stack_config.base_source_url : "${local.stack_config.base_source_url}?ref=${local.stack_version}"
+  source = local.resolved_stack_version == "" ? local.stack_config.base_source_url : "${local.stack_config.base_source_url}?ref=${local.resolved_stack_version}"
 }
 
 remote_state = local.remote_state
