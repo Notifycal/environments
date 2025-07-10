@@ -7,5 +7,6 @@ dev:
   - .opentofu-version
   - .terragrunt-version
   - .github/workflows/cicd.yaml
+  - root.hcl
 dev-dan: 'envs/dev-dan/**'
 dev-sj11: 'envs/dev-sj11/**'
