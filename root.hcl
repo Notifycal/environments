@@ -112,8 +112,8 @@ locals {
     "echo"
   )
 
-  # run_cmd will always run, regardless of condition. Uses the stack_version from env.json if isn't "latest"
-  resolved_stack_version = (local.stack_version == "latest" ?
+  # run_cmd will always run, regardless of condition. Uses the stack_version from env.json if isn't "main" or ""
+  resolved_stack_version = (contains(["", "main"], local.stack_version) ?
     trimspace(run_cmd("--terragrunt-quiet", "bash", "-c", local.get_latest_release_command)) :
     local.stack_version
   )
