@@ -108,12 +108,13 @@ inputs = {
   # Production does not require any prefixes in the domain/URLs
   domain_prefix = local.environment == "prod" ? "api" : "api${local.environment}"
 
+  frontend_domain = format("https://%s.%s",
+    local.environment == "prod" ? "private" : "private${local.environment}",
+    local.base_domain
+  )
   # For CORS
   allowed_origins = compact([
-    format("https://%s.%s",
-      local.environment == "prod" ? "private" : "private${local.environment}",
-      local.base_domain
-    ),
+    local.frontend_domain,
     startswith(local.environment, "dev") ? "http://localhost:5173" : null
   ])
 
