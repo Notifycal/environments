@@ -12,7 +12,7 @@ print_json_array() {
 }
 
 if [[ -z "${FILTERS_FILE:-}" ]]; then
-  echo "FILTERS_FILE is required but not set" | tee -a "${GITHUB_STEP_SUMMARY}"
+  echo "FILTERS_FILE is required but not set"
   exit 1
 fi
 
@@ -44,18 +44,18 @@ if [[ -n "${TARGET_ENV:-}" ]]; then
   # Skip environment if a file with its name exists in $KEEP_ENVS_DIR
   if [[ -f "$KEEP_ENVS_DIR/$TARGET_ENV" ]]; then
     echo "Environment '${TARGET_ENV}' is protected and will be skipped." | tee -a "${GITHUB_STEP_SUMMARY}"
-    echo "envs=[]" >> "${GITHUB_OUTPUT}"
+    echo "envs=[]" | tee -a "${GITHUB_OUTPUT}"
     exit 0
   fi
 
   # Mark TARGET_ENV for destroy
-  echo "envs=[\"${TARGET_ENV}\"]" >> "${GITHUB_OUTPUT}"
+  echo "envs=[\"${TARGET_ENV}\"]" | tee -a "${GITHUB_OUTPUT}"
   exit 0
 fi
 
 FINAL_ENVS=$(jq -rcn --argjson all "${ALL_DEV_ENVS}" --argjson protected "${PROTECTED_ENVS}" '$all - $protected')
 echo "Destroying all unprotected dev* environments"
-echo "envs=${FINAL_ENVS}" >> "${GITHUB_OUTPUT}"
+echo "envs=${FINAL_ENVS}" | tee -a "${GITHUB_OUTPUT}"
 
 echo "early abort just for debugging"
 exit 1;
