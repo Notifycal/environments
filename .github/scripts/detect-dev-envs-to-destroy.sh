@@ -57,7 +57,4 @@ FINAL_ENVS=$(jq -rcn --argjson all "${ALL_DEV_ENVS}" --argjson protected "${PROT
 echo "Destroying all unprotected dev* environments"
 echo "envs=${FINAL_ENVS}" | tee -a "${GITHUB_OUTPUT}"
 
-echo "early abort just for debugging"
-exit 1;
-
 exit 0
