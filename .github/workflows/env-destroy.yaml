@@ -170,7 +170,6 @@ jobs:
         with:
           pattern: result-*
           path: results
-      - run: ls -la results 
       - name: Set workflow outcome
         run: |
           files=$(find results -type f -name 'status.txt' 2>/dev/null)
