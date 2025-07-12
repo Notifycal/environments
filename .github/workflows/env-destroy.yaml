@@ -32,6 +32,7 @@ jobs:
         env:
           TARGET_ENV: ${{ github.event.inputs.target_env }}
           FILTERS_FILE: .github/filters.yaml
+          KEEP_ENVS_DIR: .keep-envs
       
   destroy:
     needs: filter-envs
