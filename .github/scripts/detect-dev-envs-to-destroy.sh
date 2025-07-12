@@ -2,28 +2,62 @@
 
 set -euo pipefail
 
+log_tab() {
+  printf "%-25s %s\n" "$1" "$2"
+}
+
+print_json_array() {
+  local json="$1"
+  echo "$json" | jq -r '. | join(", ")'
+}
+
 if [[ -z "${FILTERS_FILE:-}" ]]; then
   echo "FILTERS_FILE is required but not set" >> "${GITHUB_STEP_SUMMARY}"
   exit 1
 fi
 
-echo "Starting environment detection"
-echo "TARGET_ENV: ${TARGET_ENV}"
-echo "FILTERS_FILE: ${FILTERS_FILE}"
+ALL_DEV_ENVS=$(yq -o=json -I0 'keys | map(select(. == "dev*"))' "${FILTERS_FILE}")
+PROTECTED_ENVS=$(find .keep-envs -maxdepth 1 -type f -printf "%f\n" 2>/dev/null | jq -R . | jq -crs .)
+
+echo "Starting environment detection..."
+echo
+log_tab "Filters file:" "${FILTERS_FILE}"
+
+if [[ -v TARGET_ENV && -n "$TARGET_ENV" ]]; then
+  log_tab "Target environments:" "$TARGET_ENV"
+else
+  log_tab "Target environments:" "[all] -> $(print_json_array "${ALL_DEV_ENVS}")"
+fi
+
+log_tab "Dev* environments:" "$(print_json_array "${ALL_DEV_ENVS}")"
+log_tab "Protected environments:" "$(print_json_array "${PROTECTED_ENVS}")"
+echo
 
 echo "Check if we have a target environment set for destroy"
-if [[ "${TARGET_ENV}" != "" ]]; then
+if [[ -n "${TARGET_ENV:-}" ]]; then
+  # Skip non dev* environments for safety
   if [[ "${TARGET_ENV}" != dev* ]]; then
-    echo "Invalid environment. This only supports destroying \`dev*\` environments." >> "${GITHUB_STEP_SUMMARY}"
+    echo "Invalid environment '${TARGET_ENV}'. Only \`dev*\` environments can be destroyed." >> "${GITHUB_STEP_SUMMARY}"
     exit 1
   fi
 
+  # Skip environment if a file with its name exists in $KEEP_ENVS_DIR
+  if [[ -f "$KEEP_ENVS_DIR/$TARGET_ENV" ]]; then
+    echo "Environment '${TARGET_ENV}' is protected and will be skipped." >> "${GITHUB_STEP_SUMMARY}"
+    echo "envs=[]" >> "${GITHUB_OUTPUT}"
+    exit 0
+  fi
+
+  # Mark TARGET_ENV for destroy
   echo "envs=[\"${TARGET_ENV}\"]" >> "${GITHUB_OUTPUT}"
   exit 0
 fi
 
-echo "Destroying all dev* environments"
-ENV_KEYS=$(yq -o=json -I0 'keys | map(select(. == "dev*"))' "${FILTERS_FILE}")
-echo "envs=${ENV_KEYS}" >> "${GITHUB_OUTPUT}"
+FINAL_ENVS=$(jq -rcn --argjson all "${ALL_DEV_ENVS}" --argjson protected "${PROTECTED_ENVS}" '$all - $protected')
+echo "Destroying all unprotected dev* environments"
+echo "envs=${FINAL_ENVS}" >> "${GITHUB_OUTPUT}"
+
+echo "early abort just for debugging"
+exit 1;
 
 exit 0
