@@ -17,7 +17,7 @@ if [[ -z "${FILTERS_FILE:-}" ]]; then
 fi
 
 ALL_DEV_ENVS=$(yq -o=json -I0 'keys | map(select(. == "dev*"))' "${FILTERS_FILE}")
-PROTECTED_ENVS=$(find .keep-envs -maxdepth 1 -type f -printf "%f\n" 2>/dev/null | jq -R . | jq -crs .)
+PROTECTED_ENVS=$(find "${KEEP_ENVS_DIR}" -maxdepth 1 -type f ! -name .gitkeep -printf "%f\n" 2>/dev/null | jq -R . | jq -crs .)
 
 echo "Starting environment detection..."
 echo
