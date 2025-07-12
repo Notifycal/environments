@@ -2,6 +2,11 @@
 
 set -euo pipefail
 
+if [[ -z "${FILTERS_FILE:-}" ]]; then
+  echo "FILTERS_FILE is required but not set" >> "${GITHUB_STEP_SUMMARY}"
+  exit 1
+fi
+
 echo "Starting environment detection"
 echo "TARGET_ENV: ${TARGET_ENV}"
 echo "FILTERS_FILE: ${FILTERS_FILE}"
