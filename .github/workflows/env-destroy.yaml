@@ -173,6 +173,13 @@ jobs:
       - run: ls -la results 
       - name: Set workflow outcome
         run: |
+          files=$(find results -type f -name 'status.txt' 2>/dev/null)
+
+          if [[ -z "$files" ]]; then
+            echo "No job results found. Skipping failure check."
+            exit 0
+          fi
+
           if grep -xq 'failure' results/*/status.txt; then
             echo "At least one job failed. Failing workflow"
             exit 1
