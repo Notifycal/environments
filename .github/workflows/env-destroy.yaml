@@ -28,26 +28,11 @@ jobs:
             
       - name: Detect/verify environments to destroy (dev*)
         id: set-matrix
-        run: |
-          echo "Check if we have a target environment set for destroy"
-          if [[ "${TARGET_ENV}" != "" ]]; then
-            if [[ "${TARGET_ENV}" != dev* ]]; then
-              echo "Invalid environment. This only supports destroying \`dev*\` environments." >> "${GITHUB_STEP_SUMMARY}"
-              exit 1
-            fi
-
-            echo "envs=[\"${TARGET_ENV}\"]" >> "${GITHUB_OUTPUT}"
-            exit 0
-          fi
-
-          echo "Destroying all dev* environments"
-          ENV_KEYS=$(yq -o=json -I0 'keys | map(select(. == "dev*"))' "${FILTERS_FILE}")
-          echo "envs=${ENV_KEYS}" >> "${GITHUB_OUTPUT}"
-
-          exit 0
+        run: .github/scripts/detect-dev-envs-to-destroy.sh
         env:
           TARGET_ENV: ${{ github.event.inputs.target_env }}
           FILTERS_FILE: .github/filters.yaml
+          KEEP_ENVS_DIR: .keep-envs
       
   destroy:
     needs: filter-envs
@@ -185,10 +170,19 @@ jobs:
         with:
           pattern: result-*
           path: results
-      - run: ls -la results 
       - name: Set workflow outcome
         run: |
-          if grep -xq 'failure' results/*/status.txt; then
+          # Create an array from find results
+          readarray -t status_files < <(find results -type f -name 'status.txt' 2>/dev/null)
+          
+          # Check if the array is empty
+          if [[ ${#status_files[@]} -eq 0 ]]; then
+            echo "No job results found. Skipping failure check."
+            exit 0
+          fi
+
+          # Check if any file contains 'failure'
+          if grep -xq 'failure' "${status_files[@]}"; then
             echo "At least one job failed. Failing workflow"
             exit 1
           else

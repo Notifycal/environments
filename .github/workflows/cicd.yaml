@@ -213,13 +213,21 @@ jobs:
         with:
           pattern: result-*
           path: results
-      - run: ls -la results 
       - name: Set workflow outcome
         run: |
-          if grep -xq 'failure' results/*/status.txt; then
+          # Create an array from find results
+          readarray -t status_files < <(find results -type f -name 'status.txt' 2>/dev/null)
+          
+          # Check if the array is empty
+          if [[ ${#status_files[@]} -eq 0 ]]; then
+            echo "No job results found. Skipping failure check."
+            exit 0
+          fi
+
+          # Check if any file contains 'failure'
+          if grep -xq 'failure' "${status_files[@]}"; then
             echo "At least one job failed. Failing workflow"
             exit 1
           else
             echo "All jobs passed"
           fi
-          
