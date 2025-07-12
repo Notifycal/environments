@@ -12,7 +12,7 @@ print_json_array() {
 }
 
 if [[ -z "${FILTERS_FILE:-}" ]]; then
-  echo "FILTERS_FILE is required but not set" >> "${GITHUB_STEP_SUMMARY}"
+  echo "FILTERS_FILE is required but not set" | tee -a "${GITHUB_STEP_SUMMARY}"
   exit 1
 fi
 
@@ -37,13 +37,13 @@ echo "Check if we have a target environment set for destroy"
 if [[ -n "${TARGET_ENV:-}" ]]; then
   # Skip non dev* environments for safety
   if [[ "${TARGET_ENV}" != dev* ]]; then
-    echo "Invalid environment '${TARGET_ENV}'. Only \`dev*\` environments can be destroyed." >> "${GITHUB_STEP_SUMMARY}"
+    echo "Invalid environment '${TARGET_ENV}'. Only \`dev*\` environments can be destroyed." | tee -a "${GITHUB_STEP_SUMMARY}"
     exit 1
   fi
 
   # Skip environment if a file with its name exists in $KEEP_ENVS_DIR
   if [[ -f "$KEEP_ENVS_DIR/$TARGET_ENV" ]]; then
-    echo "Environment '${TARGET_ENV}' is protected and will be skipped." >> "${GITHUB_STEP_SUMMARY}"
+    echo "Environment '${TARGET_ENV}' is protected and will be skipped." | tee -a "${GITHUB_STEP_SUMMARY}"
     echo "envs=[]" >> "${GITHUB_OUTPUT}"
     exit 0
   fi
