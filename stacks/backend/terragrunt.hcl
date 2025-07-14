@@ -4,6 +4,14 @@ locals {
 
   # Can this be a global setting for all stacks? Does it make sense?
   base_domain = "notifycal.com"
+  frontend_url = format("https://%s.%s",
+    local.environment == "prod" ? "private" : "private${local.environment}",
+    local.base_domain
+  )
+  allowed_origins = compact([
+    local.frontend_url,
+    startswith(local.environment, "dev") ? "http://localhost:5173" : null
+  ])
 }
 
 dependency "env_secrets" {
@@ -108,15 +116,8 @@ inputs = {
   # Production does not require any prefixes in the domain/URLs
   domain_prefix = local.environment == "prod" ? "api" : "api${local.environment}"
 
-  frontend_url = format("https://%s.%s",
-    local.environment == "prod" ? "private" : "private${local.environment}",
-    local.base_domain
-  )
   # For CORS
-  allowed_origins = compact([
-    local.frontend_url,
-    startswith(local.environment, "dev") ? "http://localhost:5173" : null
-  ])
+  allowed_origins = local.allowed_origins
 
   jwt_config = dependency.env_secrets.outputs.jwt_config
   jwt_keys   = dependency.env_secrets.outputs.jwt_keys
