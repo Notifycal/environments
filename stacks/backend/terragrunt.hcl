@@ -122,12 +122,9 @@ inputs = {
   jwt_keys   = dependency.env_secrets.outputs.jwt_keys
 
   google_oauth_config = {
-    client_id     = dependency.env_secrets.outputs.google_oauth_client_id
-    client_secret = dependency.env_secrets.outputs.google_oauth_client_secret
-    redirect_url_list = compact([
-      dependency.env_secrets.outputs.google_oauth_redirect_url,
-      startswith(local.environment, "dev") ? "http://localhost:5173" : null
-    ])
+    client_id         = dependency.env_secrets.outputs.google_oauth_client_id
+    client_secret     = dependency.env_secrets.outputs.google_oauth_client_secret
+    redirect_url_list = local.allowed_origins
   }
 
   vonage_auth_config = {

@@ -25,10 +25,6 @@ output "google_oauth_client_secret" {
   sensitive = true
 }
 
-output "google_oauth_redirect_url" {
-  value = var.google_oauth_redirect_url
-}
-
 output "vonage_api_key" {
   value = var.vonage_api_key
 }

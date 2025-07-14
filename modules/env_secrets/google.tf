@@ -17,13 +17,3 @@ resource "aws_ssm_parameter" "google_oauth_client_secret" {
     prevent_destroy = true
   }
 }
-
-resource "aws_ssm_parameter" "redirect_url" {
-  name  = "/notifycal/${var.environment}/providers/google/oauth/redirect-url"
-  type  = "String"
-  value = var.google_oauth_redirect_url
-
-  lifecycle {
-    prevent_destroy = true
-  }
-}
