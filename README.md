@@ -192,3 +192,51 @@ TG_SKIP_PRE_PLAN_HOOK=true terragrunt plan
 export TG_SKIP_PRE_PLAN_HOOK=true
 terragrunt plan
 ```
+
+## Prevent Environment Destruction via `.keep-envs/`
+
+By default, our cleanup workflow will destroy all `dev*` environments on a scheduled basis or when explicitly triggered. However, you can prevent specific environments from being destroyed by using the `.keep-envs/` mechanism.
+
+> If a file with the same name as the environment exists inside `.keep-envs/`, that environment will be **excluded** from automated destruction.
+>
+> The file does not need any content. Its **presence alone** is enough.
+
+---
+
+### Example
+
+Suppose you want to prevent `dev-dan` from being destroyed:
+
+```bash
+touch .keep-envs/dev-dan
+git add .keep-envs/dev-dan
+git commit -m "Keep dev-dan for debugging"
+git push
+```
+
+To allow it to be destroyed again:
+
+```bash
+git rm .keep-envs/dev-dan
+git commit -m "Allow dev-dan to be cleaned up"
+git push
+```
+
+---
+
+### Directory overview
+
+```
+.keep-envs/
+├── dev-dan      # Will NOT be destroyed
+├── dev-foo      # Will NOT be destroyed
+# (other dev-* environments without a file will be destroyed normally)
+```
+
+---
+
+### ⚠️ Notes
+
+- This only affects `dev*` environments.
+- The `.keep-envs/` folder is committed to the repo, so protection state is version-controlled.
+- The `.gitkeep` file is ignored by the cleanup logic — it just ensures the folder exists.
