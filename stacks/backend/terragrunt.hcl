@@ -4,6 +4,14 @@ locals {
 
   # Can this be a global setting for all stacks? Does it make sense?
   base_domain = "notifycal.com"
+  frontend_url = format("https://%s.%s",
+    local.environment == "prod" ? "private" : "private${local.environment}",
+    local.base_domain
+  )
+  allowed_origins = compact([
+    local.frontend_url,
+    startswith(local.environment, "dev") ? "http://localhost:5173" : null
+  ])
 }
 
 dependency "env_secrets" {
@@ -109,24 +117,15 @@ inputs = {
   domain_prefix = local.environment == "prod" ? "api" : "api${local.environment}"
 
   # For CORS
-  allowed_origins = compact([
-    format("https://%s.%s",
-      local.environment == "prod" ? "private" : "private${local.environment}",
-      local.base_domain
-    ),
-    startswith(local.environment, "dev") ? "http://localhost:5173" : null
-  ])
+  allowed_origins = local.allowed_origins
 
   jwt_config = dependency.env_secrets.outputs.jwt_config
   jwt_keys   = dependency.env_secrets.outputs.jwt_keys
 
   google_oauth_config = {
-    client_id     = dependency.env_secrets.outputs.google_oauth_client_id
-    client_secret = dependency.env_secrets.outputs.google_oauth_client_secret
-    redirect_url_list = compact([
-      dependency.env_secrets.outputs.google_oauth_redirect_url,
-      startswith(local.environment, "dev") ? "http://localhost:5173" : null
-    ])
+    client_id         = dependency.env_secrets.outputs.google_oauth_client_id
+    client_secret     = dependency.env_secrets.outputs.google_oauth_client_secret
+    redirect_url_list = local.allowed_origins
   }
 
   vonage_auth_config = {
