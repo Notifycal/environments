@@ -17,3 +17,13 @@ resource "aws_ssm_parameter" "stripe_operating_api_key" {
     prevent_destroy = true
   }
 }
+
+resource "aws_ssm_parameter" "stripe_admin_webhook_url" {
+  name  = "/notifycal/${var.environment}/providers/stripe/admin-webhook-url"
+  type  = "SecureString"
+  value = var.stripe_admin_webhook_url
+
+  lifecycle {
+    prevent_destroy = true
+  }
+}
