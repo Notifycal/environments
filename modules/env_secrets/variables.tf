@@ -72,3 +72,9 @@ variable "stripe_operating_api_key" {
   type        = string
   sensitive   = true
 }
+variable "stripe_admin_webhook_url" {
+  description = "Endpoint URL for Stripe to send admin-level updates such us new customer, disputes open, etc.. Typically, it will be the Stripe Slack App. It requires a manual step: check out https://notifycal.slack.com/marketplace/A0F81FNVC-stripe"
+  type        = string
+  sensitive   = true
+  default     = null
+}

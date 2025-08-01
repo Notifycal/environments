@@ -146,4 +146,5 @@ inputs = {
 
   stripe_operating_api_key = dependency.env_secrets.outputs.stripe_operating_api_key
   stripe_admin_api_key     = dependency.env_secrets.outputs.stripe_admin_api_key
+  stripe_admin_webhook_url = dependency.env_secrets.outputs.stripe_admin_webhook_url
 }
