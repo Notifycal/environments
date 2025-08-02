@@ -60,7 +60,8 @@ output "stripe_operating_api_key" {
   value     = var.stripe_operating_api_key
   sensitive = true
 }
+
 output "stripe_admin_webhook_url" {
-  value     = var.stripe_admin_webhook_url
+  value     = try(var.stripe_admin_webhook_url, null)
   sensitive = true
 }
