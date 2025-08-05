@@ -11,6 +11,6 @@ inputs = {
   enable_www_redirect = false
   cloudflare_config = {
     private_site_auth = {}
-    precedence = 1
+    precedence        = 2
   }
 }

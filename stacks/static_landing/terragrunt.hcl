@@ -51,14 +51,6 @@ dependency "payment_plans" {
         }
       }
     }
-    spain_tax_config = {
-      id         = "spain_tax_id_mock"
-      percentage = 21
-      inclusive  = true
-    }
-    country_to_sms_cost_map = {
-      ES = 1.3
-    }
   }
 
   mock_outputs_allowed_terraform_commands = ["init", "providers", "validate"]
@@ -67,5 +59,5 @@ dependency "payment_plans" {
 inputs = {
   base_domain = "notifycal.com"
   # Production does not require any prefixes in the domain/URLs
-  domain_prefix = local.environment == "prod" ? "private" : "private${local.environment}"
+  domain_prefix = local.environment == "prod" ? "" : local.environment
 }

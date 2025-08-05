@@ -121,7 +121,7 @@ locals {
 
 terraform {
   before_hook "install_tofu_version" {
-    commands = ["init", "state", "import", "refresh", "output", "taint", "untaint", "plan", "apply"]
+    commands = ["init", "providers", "state", "import", "refresh", "output", "taint", "untaint", "plan", "apply"]
     # Redirecting the output to stderr to avoid the output being captured by Terragrunt. Otherwise, `terragrunt output -json` won't return valid JSON.
     execute     = [get_env("SHELL", "/bin/bash"), "-ce", local.install_tofu_hook]
     working_dir = "${get_terragrunt_dir()}"
@@ -222,25 +222,6 @@ generate "vars" {
   path      = "_tg.variables.tf"
   if_exists = "overwrite"
   contents  = file("${get_repo_root()}/stacks/variables.tf")
-}
-
-generate "ssm_param_registration" {
-  disable     = try(!local.stack_config.register, true)
-  if_disabled = "remove_terragrunt" // What to do if a file already exists at path and disable is set to true
-  if_exists   = "overwrite"
-
-  path              = "_tg.register_service.tf"
-  disable_signature = true
-
-  # This relies on some convention. TODO: Write docs:
-  # 1. We expect the stack to expose a local: _service_registration_url
-  contents = <<EOF
-resource "aws_ssm_parameter" "service_registration" {
-  name        = "/notifycal/${local.merged_inputs.environment}/${local.stack_name}/url"
-  type        = "String"
-  value       = local._service_registration_url
-}
-EOF
 }
 
 dependency "localstack" {

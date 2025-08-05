@@ -21,6 +21,5 @@
       "source": "Mastercard/restapi",
       "version": "~> 2.0.1"
     }
-  },
-  "register": true
+  }
 }
