@@ -62,7 +62,7 @@ jobs:
     needs: filter-envs
     if: |
       github.event.pull_request.draft == false &&
-      ${{ needs.filter-envs.outputs.envs != '[]' }}
+      needs.filter-envs.outputs.envs != '[]'
     strategy:
       matrix:
         env: ${{ fromJson(needs.filter-envs.outputs.envs) }}
