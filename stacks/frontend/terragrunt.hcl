@@ -61,7 +61,7 @@ dependency "payment_plans" {
     }
   }
 
-  mock_outputs_allowed_terraform_commands = ["init", "validate"]
+  mock_outputs_allowed_terraform_commands = ["init", "providers", "validate"]
 }
 
 inputs = {

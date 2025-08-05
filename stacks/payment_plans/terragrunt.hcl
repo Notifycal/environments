@@ -7,7 +7,7 @@ dependency "env_secrets" {
     google_oauth_redirect_url  = "http://mock.redirect.url"
   }
 
-  mock_outputs_allowed_terraform_commands = ["init", "validate"]
+  mock_outputs_allowed_terraform_commands = ["init", "providers", "validate"]
 }
 
 inputs = {

@@ -13,7 +13,7 @@ dependency "backend" {
     api_url = "https://mock-api-url.com"
   }
 
-  mock_outputs_allowed_terraform_commands = ["init", "validate"]
+  mock_outputs_allowed_terraform_commands = ["init", "providers", "validate", "plan"]
 }
 
 inputs = {
