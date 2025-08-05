@@ -236,7 +236,7 @@ generate "ssm_param_registration" {
   # 1. We expect the stack to expose a local: _service_registration_url
   contents = <<EOF
 resource "aws_ssm_parameter" "service_registration" {
-  name        = "/notifycal/${local.merged_inputs.environment}/${local.stack_name}/url"
+  name        = "/notifycal/${local.merged_inputs.environment}/${replace(local.stack_name, "_", "-")}/url"
   type        = "String"
   value       = local._service_registration_url
 }
