@@ -11,6 +11,7 @@ on:
     branches:
       - main
   pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
     branches:
       - main
 
@@ -25,6 +26,7 @@ env:
 
 jobs:
   filter-envs:
+    if: github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     outputs:
       envs: ${{ steps.set-matrix.outputs.envs }}
@@ -55,11 +57,12 @@ jobs:
         env:
           TARGET_ENV: ${{ github.event.inputs.target_env }}
           CHANGES: ${{ steps.filter.outputs.changes }}
-
       
   deploy:
     needs: filter-envs
-    if: ${{ needs.filter-envs.outputs.envs != '[]' }}
+    if: |
+      github.event.pull_request.draft == false &&
+      ${{ needs.filter-envs.outputs.envs != '[]' }}
     strategy:
       matrix:
         env: ${{ fromJson(needs.filter-envs.outputs.envs) }}
