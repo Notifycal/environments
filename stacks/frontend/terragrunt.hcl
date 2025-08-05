@@ -3,10 +3,8 @@ locals {
   environment = basename(dirname(path_relative_to_include()))
 }
 
-dependency "backend" {
-  config_path = "${get_terragrunt_dir()}/../backend"
-
-  # There are no outputs from frontend that backend would need to use.
+dependency "url_registry" {
+  config_path = "${get_terragrunt_dir()}/../url_registry"
   skip_outputs = true
 }
 
