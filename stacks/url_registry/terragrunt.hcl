@@ -18,7 +18,7 @@ dependency "backend" {
 
 inputs = {
   urls_to_register = {
-    backend        = dependency.backend.api_url
+    backend        = dependency.backend.outputs.api_url
     frontend       = "https://${local.frontend_domain_prefix}.${local.base_domain}"
     static-landing = "https://${local.static_landing_domain_prefix}.${local.base_domain}"
   }
