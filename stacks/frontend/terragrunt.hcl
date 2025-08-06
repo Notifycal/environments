@@ -4,7 +4,7 @@ locals {
 }
 
 dependency "url_registry" {
-  config_path = "${get_terragrunt_dir()}/../url_registry"
+  config_path  = "${get_terragrunt_dir()}/../url_registry"
   skip_outputs = true
 }
 
