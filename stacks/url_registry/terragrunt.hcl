@@ -1,6 +1,6 @@
 locals {
   environment = basename(dirname(path_relative_to_include()))
-  base_domain                  = "notifycal.com"
+  base_domain = "notifycal.com"
 
   frontend_domain_prefix       = local.environment == "prod" ? "private" : "private${local.environment}"
   static_landing_domain_prefix = local.environment == "prod" ? "" : local.environment
