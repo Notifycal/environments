@@ -2,6 +2,8 @@ locals {
   environment = basename(dirname(path_relative_to_include()))
   base_domain = "notifycal.com"
 
+  # Production does not require any env-scoped prefixes in the domain/URLs. But the other environments
+  # do, due to a Cloudflare subdomain limitation for free accounts
   frontend_domain_prefix       = local.environment == "prod" ? "private" : "private${local.environment}"
   static_landing_domain_prefix = local.environment == "prod" ? "" : local.environment
 }
@@ -17,9 +19,14 @@ dependency "backend" {
 }
 
 inputs = {
+  base_domain = local.base_domain
   urls_to_register = {
-    backend        = dependency.backend.outputs.api_url
-    frontend       = "https://${local.frontend_domain_prefix}.${local.base_domain}"
-    static-landing = "https://${local.static_landing_domain_prefix}.${local.base_domain}"
+    backend = dependency.backend.outputs.api_url
+    frontend = {
+      domain_prefix = local.frontend_domain_prefix
+    }
+    static-landing = {
+      domain_prefix = local.static_landing_domain_prefix
+    }
   }
 }
