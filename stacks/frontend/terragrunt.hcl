@@ -4,8 +4,17 @@ locals {
 }
 
 dependency "url_registry" {
-  config_path  = "${get_terragrunt_dir()}/../url_registry"
-  skip_outputs = true
+  config_path = "${get_terragrunt_dir()}/../url_registry"
+
+  mock_outputs = {
+    frontend_url = {
+      domain_prefix = "fake-domain-prefix"
+      # This has to be real because it maps to a data source DNS Zone in Cloudflare, plan will fail otherwise
+      base_domain = "notifycal.com"
+    }
+  }
+
+  mock_outputs_allowed_terraform_commands = ["init", "providers", "validate", "plan"]
 }
 
 # Probably redundant, but doesn't hurt
@@ -65,7 +74,6 @@ dependency "payment_plans" {
 }
 
 inputs = {
-  base_domain = "notifycal.com"
-  # Production does not require any prefixes in the domain/URLs
-  domain_prefix = local.environment == "prod" ? "private" : "private${local.environment}"
+  base_domain   = dependency.url_registry.outputs.frontend_url.base_domain
+  domain_prefix = dependency.url_registry.outputs.frontend_url.domain_prefix
 }
