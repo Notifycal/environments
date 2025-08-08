@@ -14,7 +14,7 @@ dependency "url_registry" {
     }
   }
 
-  mock_outputs_allowed_terraform_commands = ["init", "providers", "validate", "plan"]
+  mock_outputs_allowed_terraform_commands = ["init", "providers", "validate", "plan", "destroy"]
 }
 
 # Probably redundant, but doesn't hurt
