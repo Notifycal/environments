@@ -3,5 +3,6 @@
   "backendBaseUrl": "/notifycal/${environment}/backend/url",
   "staticLandingUrl": "/notifycal/${environment}/static-landing/url",
   "frontendUrl": "/notifycal/${environment}/frontend/url",
-  "tierInfo": "/notifycal/${environment}/tier-info"
+  "tierInfo": "/notifycal/${environment}/tier-info",
+  "googleTagManagerId": "/notifycal/${environment}/providers/google/tag-manager/id"
 }
