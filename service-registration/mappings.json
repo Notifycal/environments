@@ -4,5 +4,6 @@
   "staticLandingUrl": "/notifycal/${environment}/static-landing/url",
   "frontendUrl": "/notifycal/${environment}/frontend/url",
   "tierInfo": "/notifycal/${environment}/tier-info",
+  "countryToSmsCostMap": "/notifycal/${environment}/country-to-sms-cost-map",
   "googleTagManagerId": "/notifycal/${environment}/providers/google/tag-manager/id"
 }
