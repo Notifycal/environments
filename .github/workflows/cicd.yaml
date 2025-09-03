@@ -105,8 +105,7 @@ jobs:
           role-to-assume: ${{ secrets.AWS_IAM_OIDC_ROLE_CI }}
           role-session-name: run-${{ github.run_id }}
 
-      - name: Sanity 2
-        run: aws sts get-caller-identity
+      - run: aws sts get-caller-identity
 
       - name: Configure AWS Credentials (CI/CD Role)
         id: config_aws_credentials_ci_role
@@ -118,8 +117,7 @@ jobs:
           role-chaining: true
           role-duration-seconds: 3600  # chaining max is 3600s
 
-      - name: Sanity 2
-        run: aws sts get-caller-identity
+      - run: aws sts get-caller-identity
 
       - name: Get TF/TG version from version files
         id: get_tf_tg_version
