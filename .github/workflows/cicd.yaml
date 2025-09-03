@@ -103,7 +103,7 @@ jobs:
         with:
           aws-region: ${{ env.AWS_REGION }}
           role-to-assume: ${{ secrets.AWS_IAM_OIDC_ROLE_CI }}
-          # role-session-name: run-${{ github.run_id }}
+          role-session-name: run-${{ github.run_id }}
 
       - name: Sanity 2
         run: aws sts get-caller-identity
