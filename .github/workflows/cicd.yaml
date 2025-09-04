@@ -23,14 +23,6 @@ concurrency:
 
 env:
   AWS_REGION: eu-west-1
-  IAM_ROLE_BY_ENV: >-
-    {
-      "dev":"${{ secrets.AWS_IAM_ROLE_CI_NONPROD }}",
-      "dev-dan":"${{ secrets.AWS_IAM_ROLE_CI_NONPROD }}",
-      "dev-sj11":"${{ secrets.AWS_IAM_ROLE_CI_NONPROD }}",
-      "qa":"${{ secrets.AWS_IAM_ROLE_CI_NONPROD }}",
-      "prod":"${{ secrets.AWS_IAM_ROLE_CI_PROD }}"
-    }
 
 jobs:
   filter-envs:
@@ -124,6 +116,15 @@ jobs:
           role-session-name: run-${{ github.run_id }}
           role-chaining: true
           role-duration-seconds: 3600  # chaining max is 3600s
+        env:
+          IAM_ROLE_BY_ENV: >-
+            {
+              "dev":"${{ secrets.AWS_IAM_ROLE_CI_NONPROD }}",
+              "dev-dan":"${{ secrets.AWS_IAM_ROLE_CI_NONPROD }}",
+              "dev-sj11":"${{ secrets.AWS_IAM_ROLE_CI_NONPROD }}",
+              "qa":"${{ secrets.AWS_IAM_ROLE_CI_NONPROD }}",
+              "prod":"${{ secrets.AWS_IAM_ROLE_CI_PROD }}"
+            }
 
       - run: aws sts get-caller-identity
 
