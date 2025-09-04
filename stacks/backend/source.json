@@ -1,5 +1,5 @@
 {
-  "base_source_url": "git@github.com:Notifycal/backend.git//tf",
+  "base_source_url": "/Users/dan/dev/personal/notifycal/backend//tf",
   "required_providers": {
     "null": {
       "source": "hashicorp/null",

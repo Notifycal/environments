@@ -9,6 +9,13 @@ locals {
   stack_path    = "${get_repo_root()}/stacks/${local.stack_name}"
   stack_version = local.merged_inputs.stack_versions[local.stack_name]
 
+  environment_iam_role_mapping = {
+    dev = "arn:aws:iam::381492094204:role/ci-role"
+    dev-dan = "arn:aws:iam::381492094204:role/ci-role"
+    dev-sj11 = "arn:aws:iam::381492094204:role/ci-role"
+    prod = "arn:aws:iam::222261726252:role/ci-role"
+  }
+
   _is_ephemeral_deploy = get_env("EPHEMERAL_DEPLOY", "false")
   environment_tags = {
     Project          = local.merged_inputs.project_name
@@ -36,6 +43,9 @@ locals {
       dynamodb_table      = "tofu-lock-${local.merged_inputs.project_name}-${local.merged_inputs.environment}"
       s3_bucket_tags      = local.environment_tags
       dynamodb_table_tags = local.environment_tags
+      assume_role = {
+        role_arn = local.environment_iam_role_mapping[local.merged_inputs.environment]
+      }
     }, {}][!local.is_local_env ? 0 : 1]
     generate = {
       path      = "_tg.backend.tf"
