@@ -9,6 +9,7 @@ inputs = {
   force_destroy_bucket = false
   enable_www_redirect  = true
   cloudflare_config = {
-    private_site_auth = null
+    private_site_auth = {}
+    precedence        = 1
   }
 }
