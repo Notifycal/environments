@@ -71,15 +71,27 @@ jobs:
         id: gh_internal_repo_access
         run: git config --global url."https://foo:${{ steps.gh-app-auth.outputs.token }}@github.com".insteadOf ssh://git@github.com
 
-      - name: Configure AWS Credentials
-        id: config_aws_credentials
+      - name: Configure AWS Credentials (OIDC Role)
+        id: config_aws_credentials_oidc_role
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-region: ${{ env.AWS_REGION }}
-          role-to-assume: ${{ secrets.AWS_IAM_ROLE_CI }}
+          role-to-assume: ${{ secrets.AWS_IAM_OIDC_ROLE_CI }}
           role-session-name: run-${{ github.run_id }}
+
       - run: aws sts get-caller-identity
-        id: aws_sts_get_caller_identity
+
+      - name: Configure AWS Credentials (CI/CD Role)
+        id: config_aws_credentials_ci_role
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ env.AWS_REGION }}
+          role-to-assume: ${{ secrets.AWS_IAM_ROLE_CI_NONPROD }}
+          role-session-name: run-${{ github.run_id }}
+          role-chaining: true
+          role-duration-seconds: 3600  # chaining max is 3600s
+
+      - run: aws sts get-caller-identity
 
       - name: Get TF/TG version from version files
         id: get_tf_tg_version
