@@ -66,8 +66,6 @@ jobs:
     strategy:
       matrix:
         env: ${{ fromJson(needs.filter-envs.outputs.envs) }}
-        exclude:
-          - env: prod
     continue-on-error: true
     runs-on: ubuntu-latest
     name: 'CI/CD: ${{ matrix.env }}'
@@ -207,7 +205,7 @@ jobs:
           cd envs/${{ matrix.env }}
           terragrunt run-all apply
         # Apply only when merging to main branch
-        if: github.event_name != 'pull_request'
+        if: github.event_name != 'pull_request' && matrix.env != 'prod'
         env:
           TERRAGRUNT_NON_INTERACTIVE: "true"
           GH_TOKEN: ${{ steps.gh-app-auth.outputs.token }}
