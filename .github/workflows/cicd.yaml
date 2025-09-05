@@ -66,6 +66,8 @@ jobs:
     strategy:
       matrix:
         env: ${{ fromJson(needs.filter-envs.outputs.envs) }}
+        exclude:
+          - env: prod
     continue-on-error: true
     runs-on: ubuntu-latest
     name: 'CI/CD: ${{ matrix.env }}'
