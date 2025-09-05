@@ -204,8 +204,12 @@ jobs:
         run: |
           cd envs/${{ matrix.env }}
           terragrunt run-all apply
-        # Apply only when merging to main branch
-        if: github.event_name != 'pull_request' && matrix.env != 'prod'
+        # Apply only when:
+        # - non prod merge to main branch (push event)
+        # - prod manual trigger
+        #
+        # Lift prod guard when we get more confidence
+        if: github.event_name != 'pull_request' && !(github.event_name == 'push' && matrix.env == 'prod')
         env:
           TERRAGRUNT_NON_INTERACTIVE: "true"
           GH_TOKEN: ${{ steps.gh-app-auth.outputs.token }}
