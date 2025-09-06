@@ -15,7 +15,7 @@ inputs = {
       slack_channel = "#prod-alerting"
     }
     alert_config = {
-      treat_missing_data       = "missing"
+      treat_missing_data       = "ignore"
       notify_insufficient_data = false
     }
   }
