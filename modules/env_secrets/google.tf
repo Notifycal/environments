@@ -19,7 +19,7 @@ resource "aws_ssm_parameter" "google_oauth_client_secret" {
 }
 
 resource "aws_ssm_parameter" "landing_google_tag_manager_id" {
-  name  = "/notifycal/${var.environment}/providers/google/tag-manager/landing-id"
+  name  = "/notifycal/${var.environment}/static-landing/providers/google/tag-manager/id"
   type  = "String"
   value = var.landing_google_tag_manager_id
 
