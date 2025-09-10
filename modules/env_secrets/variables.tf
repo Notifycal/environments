@@ -42,6 +42,7 @@ variable "google_oauth_client_secret" {
 
 variable "landing_google_tag_manager_id" {
   type = string
+  default = null
 }
 
 variable "vonage_api_key" {
