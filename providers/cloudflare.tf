@@ -1,6 +1,6 @@
 variable "cloudflare_api_token" {
   sensitive = true
-  type = string
+  type      = string
 }
 
 provider "cloudflare" {
