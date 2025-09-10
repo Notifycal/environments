@@ -36,5 +36,11 @@ inputs = {
       email       = "info@${local.mailgun_domain}"
     }
   }
+  api_gateway_logging = {
+    data_trace_enabled       = true
+    logging_level            = "INFO"
+    execution_logs_retention = 180
+    access_logs_retention    = 180
+  }
   deletion_protection_enabled = false
 }
