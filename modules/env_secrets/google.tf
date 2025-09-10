@@ -18,10 +18,10 @@ resource "aws_ssm_parameter" "google_oauth_client_secret" {
   }
 }
 
-resource "aws_ssm_parameter" "google_tag_manager_id" {
-  name  = "/notifycal/${var.environment}/providers/google/tag-manager/id"
+resource "aws_ssm_parameter" "landing_google_tag_manager_id" {
+  name  = "/notifycal/${var.environment}/providers/google/tag-manager/landing-id"
   type  = "String"
-  value = var.google_tag_manager_id
+  value = var.landing_google_tag_manager_id
 
   lifecycle {
     prevent_destroy = true
