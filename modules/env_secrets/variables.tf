@@ -40,8 +40,8 @@ variable "google_oauth_client_secret" {
   sensitive = true
 }
 
-variable "landing_google_tag_manager_id" {
-  type = string
+variable "google_tag_manager_id" {
+  type    = string
   default = null
 }
 
