@@ -6,13 +6,13 @@ include "stack" {
 }
 
 locals {
-  mailgun_domain = "notifycal.com"
+  mailgun_domain = "nonprod.notifycal.com"
 }
 
 inputs = {
   observability = {
     alert_notifier = {
-      slack_channel = "#prod-alerting"
+      slack_channel = "#qa-alerting"
     }
     alert_config = {
       treat_missing_data       = "ignore"
@@ -29,7 +29,7 @@ inputs = {
   emailing_config = {
     enabled = true
     sender = {
-      displayName = "Notifycal"
+      displayName = "Notifycal QA"
       email       = "info@${local.mailgun_domain}"
     }
   }
