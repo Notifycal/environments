@@ -10,4 +10,5 @@ dev:
   - root.hcl
 dev-dan: 'envs/dev-dan/**'
 dev-sj11: 'envs/dev-sj11/**'
+qa: 'envs/qa/**'
 prod: 'envs/prod/**'
