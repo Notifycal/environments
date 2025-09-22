@@ -6,10 +6,11 @@ include "stack" {
 }
 
 inputs = {
-  force_destroy_bucket = false
-  enable_www_redirect  = false
+  force_destroy_bucket = true
+  # doesn't work for non-prod
+  enable_www_redirect = false
   cloudflare_config = {
-    private_site_auth = null
+    private_site_auth = {}
     precedence        = 2
   }
 }
