@@ -34,5 +34,6 @@ inputs = {
     execution_logs_retention = 7
     access_logs_retention    = 7
   }
+  backup_config               = null
   deletion_protection_enabled = false
 }

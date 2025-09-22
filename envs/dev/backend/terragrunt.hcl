@@ -36,5 +36,6 @@ inputs = {
       email       = "info@${local.mailgun_domain}"
     }
   }
+  backup_config               = null
   deletion_protection_enabled = false
 }
