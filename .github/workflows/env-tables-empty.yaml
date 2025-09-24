@@ -42,4 +42,4 @@ jobs:
           role-duration-seconds: 3600  # chaining max is 3600s
 
       - name: Empty environment tables
-        run: .github/scripts/empty-env-tables.sh
+        run: .github/scripts/empty-env-tables.sh "${{ github.event.inputs.target_env }}"
