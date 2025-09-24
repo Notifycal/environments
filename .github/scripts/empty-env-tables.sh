@@ -61,9 +61,9 @@ delete_all_items() {
     fi
 
     echo "Deleting item with key: $key_json"
-    # aws dynamodb delete-item \
-    #   --table-name "$table_name" \
-    #   --key "$key_json" >/dev/null
+    aws dynamodb delete-item \
+      --table-name "$table_name" \
+      --key "$key_json" >/dev/null
   done
 
   echo "Table $table_name emptied."
