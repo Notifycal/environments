@@ -1,0 +1,49 @@
+name: Delete user from environment
+
+on:
+  workflow_dispatch:
+    inputs:
+      target_env:
+        description: 'Name of the environment to delete user from.'
+        required: true
+        type: string
+      user_email:
+        description: 'Email address of the user to be deleted.'
+        required: true
+        type: string
+
+env:
+  AWS_REGION: eu-west-1
+
+jobs:
+  delete_user:
+    if: github.event.inputs.target_env != 'prod'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v5
+        id: checkout
+        with:
+          ref: ${{ github.head_ref || github.ref_name }}
+
+      - name: Configure AWS Credentials (OIDC Role)
+        id: config_aws_credentials_oidc_role
+        uses: aws-actions/configure-aws-credentials@v5
+        with:
+          aws-region: ${{ env.AWS_REGION }}
+          role-to-assume: ${{ secrets.AWS_IAM_OIDC_ROLE_CI }}
+          role-session-name: run-${{ github.run_id }}
+
+      - name: Configure AWS Credentials (CI/CD Role)
+        id: config_aws_credentials_ci_role
+        uses: aws-actions/configure-aws-credentials@v5
+        with:
+          aws-region: ${{ env.AWS_REGION }}
+          role-to-assume: ${{ secrets.AWS_IAM_ROLE_CI_NONPROD }}
+          role-session-name: run-${{ github.run_id }}
+          role-chaining: true
+          role-duration-seconds: 3600  # chaining max is 3600s
+
+      - name: 'Delete user with email: ${{ github.event.inputs.user_email }} from environment: ${{ github.event.inputs.target_env }}'
+        run: .github/scripts/delete-user.sh "${{ github.event.inputs.target_env }}" "${{ github.event.inputs.user_email }}"
