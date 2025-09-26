@@ -123,6 +123,7 @@ jobs:
               "dev-dan":"${{ secrets.AWS_IAM_ROLE_CI_NONPROD }}",
               "dev-sj11":"${{ secrets.AWS_IAM_ROLE_CI_NONPROD }}",
               "qa":"${{ secrets.AWS_IAM_ROLE_CI_NONPROD }}",
+              "demo":"${{ secrets.AWS_IAM_ROLE_CI_NONPROD }}",
               "prod":"${{ secrets.AWS_IAM_ROLE_CI_PROD }}"
             }
 
