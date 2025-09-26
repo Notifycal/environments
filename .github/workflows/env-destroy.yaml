@@ -28,7 +28,7 @@ jobs:
             
       - name: Detect/verify environments to destroy (dev*)
         id: set-matrix
-        run: .github/scripts/detect-dev-envs-to-destroy.sh
+        run: .github/scripts/detect-nonprod-envs-to-destroy.sh
         env:
           TARGET_ENV: ${{ github.event.inputs.target_env }}
           FILTERS_FILE: .github/filters.yaml
