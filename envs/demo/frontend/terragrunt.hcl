@@ -6,7 +6,7 @@ include "stack" {
 }
 
 inputs = {
-  force_destroy_bucket = false
+  force_destroy_bucket = true
   enable_www_redirect  = false
   cloudflare_config = {
     private_site_auth = null
