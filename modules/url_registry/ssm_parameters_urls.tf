@@ -4,7 +4,7 @@ resource "aws_ssm_parameter" "service_registration_url" {
   name = "/notifycal/${var.environment}/${each.key}/url"
   type = "String"
   value = (can(each.value.domain_prefix)
-    ? "https://${each.value.domain_prefix}.${var.base_domain}"
+    ? format("https://%s", each.value.domain_prefix != "" ? "${each.value.domain_prefix}.${var.base_domain}" : var.base_domain)
     : tostring(each.value) # TF doesn't follow mixed types (object | string) and fails w/o `tostring`
   )
 }
