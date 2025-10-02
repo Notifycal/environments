@@ -20,7 +20,7 @@ inputs = {
     }
   }
   messaging_config = {
-    enabled = true
+    enabled = false
   }
   mailgun_config = {
     base_url    = "https://api.eu.mailgun.net"
