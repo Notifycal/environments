@@ -5,6 +5,7 @@ provider "registry.opentofu.org/cloudflare/cloudflare" {
   version     = "5.13.0"
   constraints = ">= 5.8.0, ~> 5.8"
   hashes = [
+    "h1:dUNaOiPP8/xd0FqC5KeVznl3YfAxMcK66V84lbNMNvk=",
     "h1:k3pb/vVKqf/Ff7fWpcRBnisBEz0bNc4jYF0/UXeopYc=",
     "zh:1ff138eabee392059ddb31f4765b69c8cb3526028e62f9ea1dc4f181f71494b5",
     "zh:2f2686a43e22c5210463f467902b83dcfd1849aa39eaca9ae741a1fd8e3d893f",
@@ -23,6 +24,7 @@ provider "registry.opentofu.org/hashicorp/aws" {
   constraints = ">= 4.8.0, >= 5.0.0, >= 6.0.0, ~> 6.0"
   hashes = [
     "h1:KP8macoFJeHu14zUHTyCJXUYZV1BLqHhM65/hTaKV6k=",
+    "h1:hT4hV4kDA7HwwCEak6zYZtGAubDT9FY6G2qW2y7+HRQ=",
     "zh:154ed78ccc8606cd4a765a9bf8f5d764c0bed74f50e1e929d81a6fefff4b3294",
     "zh:2dc5bc4f47548880563559851975f7129d8767fcbf672b3d5a7f1f357c7eca98",
     "zh:6227cd3a14bc749fc2d2de4d90adf6f486ba03e681a90041c21ccb99ef6d915f",
@@ -39,6 +41,7 @@ provider "registry.opentofu.org/hashicorp/awscc" {
   version     = "1.65.0"
   constraints = ">= 1.0.0, ~> 1.0"
   hashes = [
+    "h1:11KvuH/Z8WKzOLV5pKPywEtM4k8KCRP9eFxgA3nRZd4=",
     "h1:InzxAMsBlZYVyLOMF4VO+PTXet5s8/RnV7eJ+hCfXlw=",
     "zh:13406c08f1771d2899e64efddf40b356d6f4a9d04e1fe9b724388d31fd3817a8",
     "zh:1756bcfb152d609619ce382227184ab49eda9f0c4ebc1e77cc7c096098467f58",
@@ -54,7 +57,7 @@ provider "registry.opentofu.org/hashicorp/awscc" {
 
 provider "registry.opentofu.org/hashicorp/external" {
   version     = "2.3.5"
-  constraints = "2.3.5"
+  constraints = ">= 1.0.0"
   hashes = [
     "h1:VsIY+hWGvWHaGvGTSKZslY13lPeAtSTxfZRPbpLMMhs=",
     "h1:jcVmeuuz74tdRt2kj0MpUG9AORdlAlRRQ3k61y0r5Vc=",
@@ -75,6 +78,7 @@ provider "registry.opentofu.org/hashicorp/local" {
   version     = "2.6.1"
   constraints = ">= 1.0.0"
   hashes = [
+    "h1:+XfQ7VmNtYMp0eOnoQH6cZpSMk12IP1X6tEkMoMGQ/A=",
     "h1:QH/Ay/SWVoOLgvFacjcvQcrw2WfEktZHxCcIQG0A9/w=",
     "zh:0416d7bf0b459a995cf48f202af7b7ffa252def7d23386fc05b34f67347a22ba",
     "zh:24743d559026b59610eb3d9fa9ec7fbeb06399c0ef01272e46fe5c313eb5c6ff",
@@ -90,7 +94,7 @@ provider "registry.opentofu.org/hashicorp/local" {
 
 provider "registry.opentofu.org/hashicorp/null" {
   version     = "3.2.4"
-  constraints = "3.2.4"
+  constraints = ">= 2.0.0, ~> 3.2"
   hashes = [
     "h1:i+WKhUHL2REY5EGmiHjfUljJB8UKZ9QdhdM5uTeUhC4=",
     "h1:jsKjBiLb+v3OIC3xuDiY4sR0r1OHUMSWPYKult9MhT0=",
@@ -109,7 +113,7 @@ provider "registry.opentofu.org/hashicorp/null" {
 
 provider "registry.opentofu.org/mastercard/restapi" {
   version     = "2.0.1"
-  constraints = "2.0.1"
+  constraints = ">= 2.0.1, ~> 2.0.1"
   hashes = [
     "h1:7FUxUCoE8HbfJCy99dYykFV1uYjRm0QrbeiMpsB2tSw=",
     "h1:B9x7Fql5sPqIHYSjEvQRXGOcOIUhvjV6RHKfPBUvSK8=",
