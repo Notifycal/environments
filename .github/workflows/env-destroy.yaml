@@ -178,7 +178,7 @@ jobs:
     if: always()
     steps:
       - name: Download job status artifact
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           pattern: result-*
           path: results
