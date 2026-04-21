@@ -40,7 +40,7 @@ jobs:
 
       - name: Detect changed envs
         id: filter
-        uses: dorny/paths-filter@v3
+        uses: dorny/paths-filter@v4
         with:
           filters: .github/filters.yaml
 
@@ -88,7 +88,7 @@ jobs:
 
       - name: Get GH token from Github App
         id: gh-app-auth
-        uses: getsentry/action-github-app-token@v3
+        uses: getsentry/action-github-app-token@v4.0.0
         with:
           app_id: ${{ secrets.NOTIFYCAL_CICD_APP_ID }}
           private_key: ${{ secrets.NOTIFYCAL_CICD_APP_SECRET }}
